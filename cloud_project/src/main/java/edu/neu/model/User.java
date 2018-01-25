@@ -1,4 +1,4 @@
-package com.example.model;
+package edu.neu.model;
 
 import java.util.Set;
 

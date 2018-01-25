@@ -1,7 +1,9 @@
-package com.example.controller;
+package edu.neu.controller;
 
 import javax.validation.Valid;
 
+import edu.neu.model.User;
+import edu.neu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,9 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import com.example.model.User;
-import com.example.service.UserService;
 
 @Controller
 public class LoginController {
@@ -70,7 +69,7 @@ public class LoginController {
 		String time = LocalDateTime.now()
 				.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss"));
 		modelAndView.addObject("userMessage", "Last Login "+time);
-		modelAndView.setViewName("admin/home");
+		modelAndView.setViewName("home");
 		return modelAndView;
 	}
 	

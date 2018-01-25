@@ -1,4 +1,4 @@
-package com.example.configuration;
+package edu.neu.configuration;
 
 import javax.sql.DataSource;
 

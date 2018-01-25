@@ -1,6 +1,6 @@
-package com.example.service;
+package edu.neu.service;
 
-import com.example.model.User;
+import edu.neu.model.User;
 
 public interface UserService {
 	public User findUserByEmail(String email);
