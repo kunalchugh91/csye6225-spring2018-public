@@ -9,7 +9,7 @@ Running the application:
 
 1. Check-out the repo
 2. Navigate to csye6225-spring2018 folder
-3. Run mvn clean, followed by mvn clean install
+3. Run mvn package
 4. If build is successful, navigate to target folder
-5. Run java -jar csye6225-0.0.1-SNAPSHOT.jar
-6. Navigate to localhost:8080 on browser
+5. Copy over the war file (csye.war) to your server
+6. Navigate to localhost:8080/csye/ on browser
