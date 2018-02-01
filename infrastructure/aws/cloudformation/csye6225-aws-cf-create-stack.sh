@@ -8,9 +8,11 @@ else
 	echo "Started with creating resources using cloud formation"
 fi
 
+
 RC=$(aws cloudformation describe-stacks)
 
 RC=$(aws cloudformation validate-template --template-body file://./csye6225-cf-networking.json)
+
 
 if [ $? -eq 0 ]
 then
