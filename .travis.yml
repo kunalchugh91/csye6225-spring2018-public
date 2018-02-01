@@ -1,0 +1,10 @@
+language: java
+sudo: false
+script:
+  - cd webapp
+  - mvn package
+notifications:
+  email:
+    - gohel.n@husky.neu.edu
+    - indap.n@husky.neu.edu
+    - chugh.k@husky.neu.edu
