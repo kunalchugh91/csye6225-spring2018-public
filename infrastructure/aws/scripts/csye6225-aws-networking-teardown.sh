@@ -22,7 +22,7 @@ else
 fi
 
 
-RC=$(aws ec2 delete-route --route-table-id $ROUTETABLEID --destination-cidr-block 0.0.0.0/0) || echo "Stack with vpc $1 doesn't exist"; exit 0
+RC=$(aws ec2 delete-route --route-table-id $ROUTETABLEID --destination-cidr-block 0.0.0.0/0) || echo "Stack with vpc $1 doesn't exist"
 
 if [ $? -eq 0 ]
 then

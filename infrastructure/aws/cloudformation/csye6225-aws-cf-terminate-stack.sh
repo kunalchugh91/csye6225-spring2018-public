@@ -8,7 +8,7 @@ else
 	echo "Started with deletion of resources using cloud formation"
 fi
 
-RC=$(aws cloudformation describe-stacks --stack-name $1 --query Stacks[0].StackId --output text) || echo "Stack $1 doesn't exist"; exit 0
+RC=$(aws cloudformation describe-stacks --stack-name $1 --query Stacks[0].StackId --output text) || echo "Stack $1 doesn't exist"
 
 echo "Deleting stack: $RC"
 
