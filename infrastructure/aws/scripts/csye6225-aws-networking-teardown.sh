@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 if [ -z "$1" ]
 then
@@ -21,7 +21,8 @@ else
 	exit 1
 fi
 
-RC=$(aws ec2 delete-route --route-table-id $ROUTETABLEID --destination-cidr-block 0.0.0.0/0)
+
+RC=$(aws ec2 delete-route --route-table-id $ROUTETABLEID --destination-cidr-block 0.0.0.0/0) || echo "Stack with vpc $1 doesn't exist"; exit 0
 
 if [ $? -eq 0 ]
 then
@@ -91,7 +92,6 @@ RC=$(aws ec2 delete-vpc --vpc-id $VPCID)
 if [ $? -eq 0 ]
 then
 	echo "Success delete vpc"
-
 else
 	echo "Fail delete vpc"
 	exit 1

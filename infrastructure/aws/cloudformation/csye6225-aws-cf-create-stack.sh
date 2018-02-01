@@ -8,9 +8,11 @@ else
 	echo "Started with creating resources using cloud formation"
 fi
 
-RC=$(aws cloudFormation describe-stacks)
 
-RC=$(aws cloudformation validate-template --template-body file:./csye6225-cf-networking.json)
+RC=$(aws cloudformation describe-stacks)
+
+RC=$(aws cloudformation validate-template --template-body file://./csye6225-cf-networking.json)
+
 
 if [ $? -eq 0 ]
 then
@@ -20,29 +22,12 @@ else
 	exit 1
 fi
 
-RC=$(aws cloudFormation create-stack --stack-name $1 --template-body file:./csye6225-cf-networking.json --parameters ParameterKey=STACK_NAME,ParameterValue=$1)
+RC=$(aws cloudformation create-stack --stack-name $1 --template-body file://./csye6225-cf-networking.json --parameters ParameterKey=VPCNAME,ParameterValue=$1-csye6225-vpc ParameterKey=IGWNAME,ParameterValue=$1-csye6225-InternetGateway ParameterKey=ROUTETABLENAME,ParameterValue=$1-csye6225-public-route-table )
 
-if [ $? -eq 0 ]
-then
-	echo "Success: Stack created"
-else
-	echo "Fail Stack created"
-	exit 1
-fi
+echo "Stack creation in progress. Please wait"
+aws cloudformation wait stack-create-complete --stack-name $1
+STACKDETAILS=$(aws cloudformation describe-stacks --stack-name $1 --query Stacks[0].StackId --output text)
 
-RC=$(aws cloudformation list-stacks)
-RC=$(aws cloudformation describe-stack-events --stack-name $1)
-RC=$(aws cloudformation describe-stacks --stack-name $1)
-
-RC=$(aws cloudformation delete-stack --stack-name $1)
-
-if [ $? -eq 0 ]
-then
-	echo "Success: Stack deleted"
-else
-	echo "Fail Stack deleted"
-	exit 1
-fi
-
-
-
+echo "Stack creation complete"
+echo "Stack id: $STACKDETAILS"
+exit 0

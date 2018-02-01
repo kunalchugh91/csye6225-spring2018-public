@@ -4,11 +4,9 @@ if [ -z "$1" ]
 then
 	echo "No command line argument provided for stack STACK_NAME"
 	exit 1
-else
-	echo "Started with creating resources"
 fi
 
-echo "Creating VPC .."
+echo "Creating Stack .."
 VPCNAME="$1-csye6225-vpc"
 
 RC=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16)
@@ -123,11 +121,9 @@ RC=$(aws ec2 create-route --route-table-id $ROUTETABLEID --destination-cidr-bloc
 if [ $? -eq 0 ]
 then
 	echo "Success: Route created"
-
 else
 	echo "Fail create route"
 	exit 1
 fi
 
-echo "VPC process complete. VPC id $VPCID"
-exit 0
+echo "Stack creation process complete. VPC id $VPCID"
