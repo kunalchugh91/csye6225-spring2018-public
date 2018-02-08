@@ -10,4 +10,4 @@ notifications:
       - indap.n@husky.neu.edu
       - chugh.k@husky.neu.edu
   on_success: always
-  
+  on_failure: always
