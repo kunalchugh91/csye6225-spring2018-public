@@ -28,3 +28,6 @@ dist/
 nbdist/
 .nb-gradle/
 
+### JMeter ###
+/jmeter/Login users.jmx
+/jmeter/Register users.jmx
