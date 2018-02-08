@@ -8,10 +8,18 @@ else
 	echo "Started with creating resources using cloud formation"
 fi
 
+if [ -z "$2" ]
+then
+	echo "No command line argument provided for CIDRBlock"
+	exit 1
+else
+	echo "Started with creating resources using cloud formation"
+fi
+
 
 RC=$(aws cloudformation describe-stacks)
 
-RC=$(aws cloudformation validate-template --template-body file://./csye6225-cf-networking.json)
+RC=$(aws cloudformation validate-template --template-body file://./csye6225-cf-application.json)
 
 
 if [ $? -eq 0 ]
@@ -22,7 +30,7 @@ else
 	exit 1
 fi
 
-RC=$(aws cloudformation create-stack --stack-name $1 --template-body file://./csye6225-cf-networking.json --parameters ParameterKey=VPCNAME,ParameterValue=$1-csye6225-vpc ParameterKey=IGWNAME,ParameterValue=$1-csye6225-InternetGateway ParameterKey=ROUTETABLENAME,ParameterValue=$1-csye6225-public-route-table )
+RC=$(aws cloudformation create-stack --stack-name $1 --template-body file://./csye6225-cf-application.json --parameters ParameterKey=VPCNAME,ParameterValue=$1-csye6225-vpc ParameterKey=IGWNAME,ParameterValue=$1-csye6225-InternetGateway ParameterKey=ROUTETABLENAME,ParameterValue=$1-csye6225-public-route-table ParameterKey=CIDRBLOCK,ParameterValue=$2)
 
 echo "Stack creation in progress. Please wait"
 aws cloudformation wait stack-create-complete --stack-name $1

@@ -1,0 +1,78 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+        "EC2Instance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-66506c1c",
+                "InstanceType": "t2.micro",
+                "DisableApiTermination": true,
+                "Volumes": [
+                    { "VolumeId": { "Ref": "NewVolume" }, "Device": "/dev/sdk" }
+                ]
+            }
+        },
+        "NewVolume": {
+            "Type": "AWS::EC2::Volume",
+            "Properties": {
+                "AvailabilityZone":"us-east-1a",
+                "Size": 16,
+                "VolumeType": "gp2"
+            }
+        },
+        "VPC": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock":  {"Ref": "CIDRBLOCK"} ,
+                "Tags":[{"Key" : "Name", "Value": { "Ref": "VPCNAME" }}]
+            }
+        },
+        "InternetGateway": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties":{
+              "Tags":[{"Key" : "Name", "Value": { "Ref": "IGWNAME" }}]
+            }
+        },
+        "VPCGatewayAttachment": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "Properties": {
+                "VpcId": { "Ref": "VPC" },
+                "InternetGatewayId": { "Ref": "InternetGateway" }
+            }
+        },
+        "RouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": { "Ref": "VPC" },
+                "Tags":[{"Key" : "Name", "Value": { "Ref": "ROUTETABLENAME" }}]
+            }
+        },
+        "InternetRoute": {
+            "Type": "AWS::EC2::Route",
+            "DependsOn": "InternetGateway",
+            "Properties": {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": { "Ref": "InternetGateway" },
+                "RouteTableId": { "Ref": "RouteTable" }
+            }
+        }
+    },
+    "Parameters": {
+        "VPCNAME": {
+          "Description" : "The stack name",
+          "Type": "String"
+        },
+        "IGWNAME": {
+          "Description" : "The stack name",
+          "Type": "String"
+        },
+        "ROUTETABLENAME": {
+          "Description" : "The stack name",
+          "Type": "String"
+        },
+        "CIDRBLOCK": {
+          "Description" : "CIDRBlock id",
+          "Type": "String"
+        }
+      }
+    }
