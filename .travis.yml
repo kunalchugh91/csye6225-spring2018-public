@@ -5,6 +5,9 @@ script:
   - mvn package
 notifications:
   email:
-    - gohel.n@husky.neu.edu
-    - indap.n@husky.neu.edu
-    - chugh.k@husky.neu.edu
+    recipients:
+      - gohel.n@husky.neu.edu
+      - indap.n@husky.neu.edu
+      - chugh.k@husky.neu.edu
+  on_success: always
+  on_failure: always
