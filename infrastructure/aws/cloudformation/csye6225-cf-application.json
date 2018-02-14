@@ -64,6 +64,12 @@
             "DBSubnetGroupName"     : { "Ref" : "DBSubnetGroup" },
             "MasterUserPassword"    : "csye6225password"
          }
+      },
+      "myBucket": {
+    	"Type": "AWS::S3::Bucket",
+        "Properties": {
+    		"BucketName" : { "Ref" : "DOMAIN" }
+    	 }
       }
     },
     "Parameters": {
@@ -73,6 +79,10 @@
         },
         "SUBNETID2": {
           "Description" : "The subnet id",
+          "Type": "String"
+        },
+        "DOMAIN": {
+          "Description" : "The domain name",
           "Type": "String"
         }
       }
