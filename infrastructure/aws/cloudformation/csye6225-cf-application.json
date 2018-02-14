@@ -6,7 +6,7 @@
             "Properties": {
                 "ImageId": "ami-66506c1c",
                 "InstanceType": "t2.micro",
-                "DisableApiTermination": false,
+                "DisableApiTermination": true,
                 "AvailabilityZone":"us-east-1a",
                 "SubnetId": {"Ref": "SUBNETID1"},
                 "Volumes": [

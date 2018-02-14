@@ -53,11 +53,19 @@
             "VpcId": { "Ref": "VPC" }
           }
         },
-        "PrivateSubnet": {
+        "PrivateSubnet1": {
+          "Type" : "AWS::EC2::Subnet",
+          "Properties" : {
+            "AvailabilityZone" : "us-east-1a",
+            "CidrBlock" : "10.0.1.0/24",
+            "VpcId": { "Ref": "VPC" }
+          }
+        },
+        "PrivateSubnet2": {
           "Type" : "AWS::EC2::Subnet",
           "Properties" : {
             "AvailabilityZone" : "us-east-1b",
-            "CidrBlock" : "10.0.1.0/24",
+            "CidrBlock" : "10.0.2.0/24",
             "VpcId": { "Ref": "VPC" }
           }
         },
@@ -72,7 +80,7 @@
           "Type" : "AWS::EC2::SubnetRouteTableAssociation",
           "Properties" : {
             "RouteTableId" : { "Ref": "PrivateRouteTable" },
-            "SubnetId" : { "Ref": "PrivateSubnet" }
+            "SubnetId" : { "Ref": "PrivateSubnet1" }
           }
         },
         "EC2SecurityGroupWebServer":{
