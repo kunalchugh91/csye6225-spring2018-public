@@ -1,0 +1,142 @@
+package edu.neu.controller;
+
+import edu.neu.model.User;
+import edu.neu.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Controller
+public class UploadController {
+
+    //Save the uploaded file to this folder
+    private static String UPLOADED_FOLDER = "/profiles/";
+
+    @Autowired
+    private UserService userService;
+
+    /*
+    @GetMapping("/")
+    public String index() {
+        return "upload";
+    }
+    */
+
+    @PostMapping("upload") // //new annotation since 4.3
+    public String singleFileUpload(@RequestParam("file") MultipartFile file,
+                                   RedirectAttributes redirectAttributes) {
+
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+            return "redirect:home";
+        }
+
+        String originalFileName = file.getOriginalFilename();
+        int i = originalFileName.lastIndexOf('.');
+        if (i > 0) {
+            String ext = originalFileName.substring(i + 1);
+            if (!(ext.equalsIgnoreCase("jpeg") || ext.equalsIgnoreCase("png") || ext.equalsIgnoreCase("jpg"))){
+                redirectAttributes.addFlashAttribute("message", "Please select a JPEG, PNG or JPG file to upload");
+                return "redirect:home";
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("message", "Please select a JPEG, PNG or JPG file to upload");
+            return "redirect:home";
+        }
+
+
+        try {
+            File directory;
+
+            // Get the file and save it somewhere
+            byte[] bytes = file.getBytes();
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User user = userService.findUserByEmail(auth.getName());
+
+            //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
+            File f = new File(UPLOADED_FOLDER + user.getId());
+
+            if (f.exists()){
+                for(String s : f.list()){
+                    File fi = new File(f.getPath(), s);
+                    if (fi.exists() && fi.isFile()) fi.delete();
+                }
+                if(!f.delete()){
+                    redirectAttributes.addFlashAttribute("message", "Could not delete existing profile picture");
+                    return "redirect:home";
+                }
+
+            }
+
+            f.mkdir();
+            f.setReadable(true, false);
+            f.setWritable(true, false);
+            File imageFile = new File(f.getPath(), originalFileName);
+            file.transferTo(imageFile);
+            imageFile.setReadable(true, false);
+            imageFile.setWritable(true, false);
+
+
+            redirectAttributes.addFlashAttribute("message",
+                    "You successfully uploaded '" + originalFileName + "'");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/home";
+    }
+
+    @PostMapping("delete") // //new annotation since 4.3
+    public String singleFileDelete(//@RequestParam("file") MultipartFile file,
+                                   RedirectAttributes redirectAttributes) {
+
+
+
+
+        try {
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User user = userService.findUserByEmail(auth.getName());
+
+            //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
+            File f = new File(UPLOADED_FOLDER + user.getId());
+            if (f.exists()){
+                for(String s : f.list()){
+                    File fi = new File(f.getPath(), s);
+                    if (fi.exists() && fi.isFile()) fi.delete();
+                }
+                f.delete();
+            }
+
+
+            redirectAttributes.addFlashAttribute("message",
+                    "You successfully deleted profile picture");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/home";
+    }
+
+    /*
+    @GetMapping("/uploadStatus")
+    public String uploadStatus() {
+        return "uploadStatus";
+    }
+    */
+
+}

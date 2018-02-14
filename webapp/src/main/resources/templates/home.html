@@ -20,7 +20,16 @@
 				<p class="admin-message-text text-center" th:utext="${userMessage}"></p>
 			</div>
 		</div>
-
+		<form th:action="@{/upload}" method="POST" enctype="multipart/form-data">
+			<input type="file" name="file" /><br/><br/>
+			<input type="submit" value="Upload" />
+		</form>
+		<form th:action="@{/delete}" method="POST">
+			<input type="submit" value="Delete" />
+		</form>
+		<div th:if="${message}">
+			<h2 th:text="${message}"/>
+		</div>
 		<form th:action="@{/logout}" method="get">
 			<button class="btn btn-md btn-danger btn-block" name="registration"
 					type="Submit">Logout</button>
