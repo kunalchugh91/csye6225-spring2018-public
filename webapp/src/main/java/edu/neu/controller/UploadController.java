@@ -45,6 +45,9 @@ public class UploadController {
                                    RedirectAttributes redirectAttributes) {
         UPLOADED_FOLDER = environment.getProperty("app.profile.path");
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByEmail(auth.getName());
+
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
             return "redirect:home";
@@ -56,21 +59,20 @@ public class UploadController {
             String ext = originalFileName.substring(i + 1);
             if (!(ext.equalsIgnoreCase("jpeg") || ext.equalsIgnoreCase("png") || ext.equalsIgnoreCase("jpg"))){
                 redirectAttributes.addFlashAttribute("message", "Please select a JPEG, PNG or JPG file to upload");
+                redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
                 return "redirect:home";
             }
         } else {
             redirectAttributes.addFlashAttribute("message", "Please select a JPEG, PNG or JPG file to upload");
+            redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
             return "redirect:home";
         }
-
 
         try {
             File directory;
 
             // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            User user = userService.findUserByEmail(auth.getName());
 
             //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
             File f = new File(UPLOADED_FOLDER + user.getId());
@@ -82,6 +84,7 @@ public class UploadController {
                 }
                 if(!f.delete()){
                     redirectAttributes.addFlashAttribute("message", "Could not delete existing profile picture");
+                    redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
                     return "redirect:home";
                 }
 
@@ -95,13 +98,19 @@ public class UploadController {
             imageFile.setReadable(true, false);
             imageFile.setWritable(true, false);
 
+            user.setPath(imageFile.getPath());
+            userService.updateUser(user);
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully uploaded '" + originalFileName + "'");
 
         } catch (IOException e) {
+            user.setPath("/profiles/default/defaultpic.jpeg");
+            userService.updateUser(user);
             e.printStackTrace();
         }
+
+        redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
 
         return "redirect:/home";
     }
@@ -110,13 +119,11 @@ public class UploadController {
     public String singleFileDelete(//@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
 
-
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByEmail(auth.getName());
 
 
         try {
-
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            User user = userService.findUserByEmail(auth.getName());
 
             //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
             File f = new File(UPLOADED_FOLDER + user.getId());
@@ -128,6 +135,9 @@ public class UploadController {
                 f.delete();
             }
 
+            user.setPath("/profiles/default/defaultpic.jpeg");
+            userService.updateUser(user);
+
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully deleted profile picture");
@@ -135,6 +145,9 @@ public class UploadController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
+
 
         return "redirect:/home";
     }
@@ -145,5 +158,27 @@ public class UploadController {
         return "uploadStatus";
     }
     */
+    @PostMapping("aboutme") // //new annotation since 4.3
+    public String updateAboutMe(@RequestParam("aboutme") String aboutme,
+                                   RedirectAttributes redirectAttributes) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByEmail(auth.getName());
+
+
+        try {
+
+            user.setAboutMe(aboutme);
+            userService.updateUser(user);
+
+            redirectAttributes.addFlashAttribute("aboutme",
+                    user.getAboutMe());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/home";
+    }
 
 }

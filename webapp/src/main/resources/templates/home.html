@@ -30,6 +30,10 @@
 		<div th:if="${message}">
 			<h2 th:text="${message}"/>
 		</div>
+		<form th:action="@{/aboutme}" method="POST">
+			<input type="text" name="aboutme" maxlength="140" width="1000px" height="200px" th:value="${aboutme}" /><br/><br/>
+			<input type="submit" value="Update" />
+		</form>
 		<form th:action="@{/logout}" method="get">
 			<button class="btn btn-md btn-danger btn-block" name="registration"
 					type="Submit">Logout</button>
