@@ -1,13 +1,13 @@
 package edu.neu.controller;
 
 import edu.neu.model.User;
+import edu.neu.service.S3Services;
 import edu.neu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,9 +15,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Controller
 public class UploadController {
@@ -33,6 +40,20 @@ public class UploadController {
     //Save the uploaded file to this folder
     private String UPLOADED_FOLDER;
 
+    private String PROFILE_NAME;
+
+    @Autowired
+    S3Services s3Services;
+
+    @Value("${jsa.aws.access_key_id}")
+    private String awsId;
+
+    @Value("${jsa.aws.secret_access_key}")
+    private String awsKey;
+
+    @Value("${jsa.s3.region}")
+    private String region;
+
     /*
     @GetMapping("/")
     public String index() {
@@ -45,8 +66,11 @@ public class UploadController {
                                    RedirectAttributes redirectAttributes) {
         UPLOADED_FOLDER = environment.getProperty("app.profile.path");
 
+        PROFILE_NAME = environment.getProperty("app.profile.name");
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
+
 
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
@@ -69,37 +93,44 @@ public class UploadController {
         }
 
         try {
-            File directory;
+                File directory;
 
-            // Get the file and save it somewhere
-            byte[] bytes = file.getBytes();
+                // Get the file and save it somewhere
+                byte[] bytes = file.getBytes();
 
-            //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
-            File f = new File(UPLOADED_FOLDER + user.getId());
+                //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
+                File f = new File(UPLOADED_FOLDER + user.getId());
 
-            if (f.exists()){
-                for(String s : f.list()){
-                    File fi = new File(f.getPath(), s);
-                    if (fi.exists() && fi.isFile()) fi.delete();
+                if (f.exists()) {
+                    for (String s : f.list()) {
+                        File fi = new File(f.getPath(), s);
+                        if (fi.exists() && fi.isFile()) fi.delete();
+                    }
+                    if (!f.delete()) {
+                        redirectAttributes.addFlashAttribute("message", "Could not delete existing profile picture");
+                        redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
+                        return "redirect:home";
+                    }
                 }
-                if(!f.delete()){
-                    redirectAttributes.addFlashAttribute("message", "Could not delete existing profile picture");
-                    redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
-                    return "redirect:home";
-                }
 
+
+
+                    f.mkdir();
+                    f.setReadable(true, false);
+                    f.setWritable(true, false);
+                    File imageFile = new File(f.getPath(), originalFileName);
+                    file.transferTo(imageFile);
+                    imageFile.setReadable(true, false);
+                    imageFile.setWritable(true, false);
+
+            // Upload to s3
+            if(PROFILE_NAME.equals("aws")){
+                String keyName = "profiles/"+user.getId() +"/"+originalFileName;
+                s3Services.uploadFile(keyName, f.getPath()+'/'+originalFileName);
             }
 
-            f.mkdir();
-            f.setReadable(true, false);
-            f.setWritable(true, false);
-            File imageFile = new File(f.getPath(), originalFileName);
-            file.transferTo(imageFile);
-            imageFile.setReadable(true, false);
-            imageFile.setWritable(true, false);
-
             user.setPath(imageFile.getPath());
-            userService.updateUser(user);
+                userService.updateUser(user);
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully uploaded '" + originalFileName + "'");
