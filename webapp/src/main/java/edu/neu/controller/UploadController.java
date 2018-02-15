@@ -3,6 +3,7 @@ package edu.neu.controller;
 import edu.neu.model.User;
 import edu.neu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -21,11 +22,16 @@ import java.nio.file.Paths;
 @Controller
 public class UploadController {
 
-    //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = "/profiles/";
+
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Environment environment;
+
+    //Save the uploaded file to this folder
+    private String UPLOADED_FOLDER;
 
     /*
     @GetMapping("/")
@@ -37,6 +43,7 @@ public class UploadController {
     @PostMapping("upload") // //new annotation since 4.3
     public String singleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
+        UPLOADED_FOLDER = environment.getProperty("app.profile.path");
 
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
