@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Search Page</title>
+</head>
+<body>
+
+<form th:action="@{/search}" class="form-register" method="post" th:object="${user}">
+
+    <div class="form-group">
+        <div class="col-sm-9">
+            <input type="text" th:field="*{email}" placeholder="Email"
+                   class="form-control" /> <label
+                th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                class="validation-message"></label>
+        </div>
+    </div>
+
+    <button class="btn btn-md btn-warning btn-block" type="Submit">Search User</button>
+
+    <br/>
+
+    <span th:text="*{aboutMe}"/>
+
+
+</form>
+
+<form th:action="@{/login}" method="get">
+    <button class="btn btn-md btn-warning btn-block" type="Submit">Login</button>
+</form>
+
+
+</body>
+</html>

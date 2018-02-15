@@ -70,6 +70,7 @@ public class LoginController {
 		String time = LocalDateTime.now()
 				.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss"));
 		modelAndView.addObject("userMessage", "Last Login "+time);
+        modelAndView.addObject("aboutme", user.getAboutMe());
 		modelAndView.setViewName("home");
 		return modelAndView;
 	}
