@@ -2,7 +2,7 @@ language: java
 sudo: false
 script:
   - cd webapp
-  - mvn package
+  - mvn spring-boot:run -Drun.jvmArguments="-Dspring.profiles.active=aws"
 notifications:
   email:
     recipients:
