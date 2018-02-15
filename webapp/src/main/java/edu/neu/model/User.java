@@ -42,6 +42,13 @@ public class User {
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles;
 
+	@Column(name = "about_me")
+	@Length(max = 140)
+	private String aboutMe;
+
+	@Column(name = "path")
+	private String path;
+
 	public int getId() {
 		return id;
 	}
@@ -82,4 +89,11 @@ public class User {
 		this.roles = roles;
 	}
 
+	public String getAboutMe() { return aboutMe; }
+
+	public void setAboutMe(String aboutMe) { this.aboutMe = aboutMe; }
+
+	public String getPath() { return path; }
+
+	public void setPath(String path) { this.path = path; }
 }

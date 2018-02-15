@@ -4,7 +4,7 @@
         "VPC": {
             "Type": "AWS::EC2::VPC",
             "Properties": {
-                "CidrBlock": "10.0.0.0/16",
+                "CidrBlock":  {"Ref": "CIDRBLOCK"} ,
                 "Tags":[{"Key" : "Name", "Value": { "Ref": "VPCNAME" }}]
             }
         },
@@ -21,22 +21,108 @@
                 "InternetGatewayId": { "Ref": "InternetGateway" }
             }
         },
-        "RouteTable": {
+        "PrivateRouteTable": {
             "Type": "AWS::EC2::RouteTable",
             "Properties": {
                 "VpcId": { "Ref": "VPC" },
-                "Tags":[{"Key" : "Name", "Value": { "Ref": "ROUTETABLENAME" }}]
+                "Tags":[{"Key" : "Name", "Value": { "Ref": "PRIVATEROUTETABLENAME" }}]
             }
         },
-        "InternetRoute": {
+        "PublicRouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": { "Ref": "VPC" },
+                "Tags":[{"Key" : "Name", "Value": { "Ref": "PUBLICROUTETABLENAME" }}]
+            }
+        },
+        "PublicInternetRoute": {
             "Type": "AWS::EC2::Route",
             "DependsOn": "InternetGateway",
             "Properties": {
                 "DestinationCidrBlock": "0.0.0.0/0",
                 "GatewayId": { "Ref": "InternetGateway" },
-                "RouteTableId": { "Ref": "RouteTable" }
+                "RouteTableId": { "Ref": "PublicRouteTable" }
             }
+        },
+        "PublicSubnet": {
+          "Type" : "AWS::EC2::Subnet",
+          "Properties" : {
+            "AvailabilityZone" : "us-east-1a",
+            "CidrBlock" : "10.0.0.0/24",
+            "MapPublicIpOnLaunch": true,
+            "VpcId": { "Ref": "VPC" }
+          }
+        },
+        "PrivateSubnet1": {
+          "Type" : "AWS::EC2::Subnet",
+          "Properties" : {
+            "AvailabilityZone" : "us-east-1a",
+            "CidrBlock" : "10.0.1.0/24",
+            "VpcId": { "Ref": "VPC" }
+          }
+        },
+        "PrivateSubnet2": {
+          "Type" : "AWS::EC2::Subnet",
+          "Properties" : {
+            "AvailabilityZone" : "us-east-1b",
+            "CidrBlock" : "10.0.2.0/24",
+            "VpcId": { "Ref": "VPC" }
+          }
+        },
+        "PrivateSubnetRouteTable": {
+          "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+          "Properties" : {
+            "RouteTableId" : { "Ref": "PublicRouteTable" },
+            "SubnetId" : { "Ref": "PublicSubnet" }
+          }
+        },
+        "PublicSubnetRouteTable": {
+          "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+          "Properties" : {
+            "RouteTableId" : { "Ref": "PrivateRouteTable" },
+            "SubnetId" : { "Ref": "PrivateSubnet1" }
+          }
+        },
+        "EC2SecurityGroupWebServer":{
+          "Type" : "AWS::EC2::SecurityGroup",
+          "Properties" : {
+             "GroupName" : "csye6225-webapp",
+             "GroupDescription" : "Security group for web server",
+             "SecurityGroupIngress" : [ {
+                 "IpProtocol" : "tcp",
+                 "FromPort" : "22",
+                 "ToPort" : "22",
+                 "CidrIp" : "0.0.0.0/0"
+              },
+              {
+                   "IpProtocol" : "tcp",
+                   "FromPort" : "80",
+                   "ToPort" : "80",
+                   "CidrIp" : "0.0.0.0/0"
+                },
+                {
+                   "IpProtocol" : "tcp",
+                   "FromPort" : "443",
+                   "ToPort" : "443",
+                   "CidrIp" : "0.0.0.0/0"
+              }],
+             "VpcId" : { "Ref": "VPC" }
+          }
+        },
+        "EC2SecurityGroupDBServer":{
+          "Type" : "AWS::EC2::SecurityGroup",
+          "Properties" : {
+             "GroupName" : "csye6225-rds",
+             "GroupDescription" : "Security group for DB server",
+             "SecurityGroupIngress" : [ {
+                 "IpProtocol" : "tcp",
+                 "FromPort" : "3306",
+                 "ToPort" : "3306",
+                 "SourceSecurityGroupId" : { "Ref": "EC2SecurityGroupWebServer" }
+          }],
+          "VpcId" : { "Ref": "VPC" }
         }
+      }
     },
     "Parameters": {
         "VPCNAME": {
@@ -44,11 +130,19 @@
           "Type": "String"
         },
         "IGWNAME": {
-          "Description" : "The stack name",
+          "Description" : "The Internet Gateway name",
           "Type": "String"
         },
-        "ROUTETABLENAME": {
-          "Description" : "The stack name",
+        "PRIVATEROUTETABLENAME": {
+          "Description" : "The Private Route Table name",
+          "Type": "String"
+        },
+        "PUBLICROUTETABLENAME": {
+          "Description" : "The Public Route Table name",
+          "Type": "String"
+        },
+        "CIDRBLOCK": {
+          "Description" : "CIDRBlock id",
           "Type": "String"
         }
       }

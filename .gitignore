@@ -31,3 +31,5 @@ nbdist/
 ### JMeter ###
 /jmeter/Login users.jmx
 /jmeter/Register users.jmx
+
+/webapp/src/main/resources/application-neel.properties
