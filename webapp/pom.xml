@@ -58,6 +58,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.11.106</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/net.sourceforge.nekohtml/nekohtml -->
 		<dependency>
 			<groupId>net.sourceforge.nekohtml</groupId>

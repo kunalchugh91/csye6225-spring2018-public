@@ -26,6 +26,7 @@ public class LoginController {
 	public ModelAndView login(){
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("login");
+
 		return modelAndView;
 	}
 	
@@ -51,6 +52,7 @@ public class LoginController {
 		if (bindingResult.hasErrors()) {
 			modelAndView.setViewName("registration");
 		} else {
+			user.setPath("/profiles/default/defaultpic.jpeg");
 			userService.saveUser(user);
 			modelAndView.addObject("successMessage", "User has been registered successfully");
 			modelAndView.addObject("user", new User());
@@ -69,6 +71,11 @@ public class LoginController {
 		String time = LocalDateTime.now()
 				.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss"));
 		modelAndView.addObject("userMessage", "Last Login "+time);
+        modelAndView.addObject("aboutme", user.getAboutMe());
+        if(user.getPath()== null){
+			user.setPath("/profiles/default/defaultpic.jpeg");
+		}
+		modelAndView.addObject("picture", user.getPath());
 		modelAndView.setViewName("home");
 		return modelAndView;
 	}
