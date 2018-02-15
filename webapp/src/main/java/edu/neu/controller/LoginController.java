@@ -73,6 +73,10 @@ public class LoginController {
 				.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss"));
 		modelAndView.addObject("userMessage", "Last Login "+time);
         modelAndView.addObject("aboutme", user.getAboutMe());
+        if(user.getPath()== null){
+			user.setPath("/profiles/default/defaultpic.jpeg");
+		}
+		modelAndView.addObject("picture", user.getPath());
 		modelAndView.setViewName("home");
 		return modelAndView;
 	}
