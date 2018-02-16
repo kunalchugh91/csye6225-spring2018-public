@@ -12,5 +12,18 @@ notifications:
 branches:
   only:
   - lab
+after_success:
+  - mkdir codedeploy
+  - zip -r csye6225-web-app-$TRAVIS_JOB_NUMBER.zip webapp/target/csye6225.war infrastructure/aws/codedeploy/appspec.yml
+  - ls -al
+  - mv csye6225-web-app-$TRAVIS_JOB_NUMBER.zip codedeploy/
+  - ls -al
+  - pwd
+  - cd codedeploy
+  - ls -al
+  - pwd
+  - cd ..
+  - pwd
   on_success: always
   on_failure: always
+
