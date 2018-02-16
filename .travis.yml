@@ -13,6 +13,7 @@ branches:
   only:
   - lab
 after_success:
+  - cd ..
   - mkdir codedeploy
   - zip -r csye6225-web-app-$TRAVIS_JOB_NUMBER.zip webapp/target/csye6225.war infrastructure/aws/codedeploy/appspec.yml
   - ls -al
