@@ -9,5 +9,8 @@ notifications:
       - gohel.n@husky.neu.edu
       - indap.n@husky.neu.edu
       - chugh.k@husky.neu.edu
+branches:
+  only:
+  - lab
   on_success: always
   on_failure: always
