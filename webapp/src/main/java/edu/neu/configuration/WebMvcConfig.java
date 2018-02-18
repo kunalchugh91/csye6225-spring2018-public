@@ -18,7 +18,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/profiles/**")
+		registry.addResourceHandler("/csye6225/profiles/**")
 				.addResourceLocations("file:/profiles/");
 	}
 }

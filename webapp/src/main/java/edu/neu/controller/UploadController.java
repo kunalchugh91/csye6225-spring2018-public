@@ -129,14 +129,14 @@ public class UploadController {
                 s3Services.uploadFile(keyName, f.getPath()+'/'+originalFileName);
             }
 
-            user.setPath(imageFile.getPath());
+            user.setPath("csye6225"+imageFile.getPath());
                 userService.updateUser(user);
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully uploaded '" + originalFileName + "'");
 
         } catch (IOException e) {
-            user.setPath("/profiles/default/defaultpic.jpeg");
+            user.setPath("csye6225/profiles/default/defaultpic.jpeg");
             userService.updateUser(user);
             e.printStackTrace();
         }
@@ -166,7 +166,7 @@ public class UploadController {
                 f.delete();
             }
 
-            user.setPath("/profiles/default/defaultpic.jpeg");
+            user.setPath("csye6225/profiles/default/defaultpic.jpeg");
             userService.updateUser(user);
 
 
