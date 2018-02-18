@@ -16,9 +16,6 @@ else
 	echo "CIDRBlock address provided."
 fi
 
-
-RC=$(aws cloudformation describe-stacks)
-
 echo "Validating template"
 RC=$(aws cloudformation validate-template --template-body file://./csye6225-cf-networking.json)
 echo "Template is valid"

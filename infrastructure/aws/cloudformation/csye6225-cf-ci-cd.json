@@ -1,0 +1,113 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+      "CodeDeployEC2ServiceRole":{
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": { JSON },
+              "ManagedPolicyArns": [ String, ... ],
+              "Path": String,
+              "RoleName": "CodeDeployEC2ServiceRole"
+            }
+       },
+       "CodeDeployServiceRole":{
+           "Type": "AWS::IAM::Role",
+           "Properties": {
+             "AssumeRolePolicyDocument": { JSON },
+             "ManagedPolicyArns": [ String, ... ],
+             "Path": String,
+             "RoleName": "CodeDeployServiceRole"
+           }
+       },
+      "CD-E-S": {
+        "Type" : "AWS::IAM::Policy",
+        "Properties" : {
+          "PolicyDocument" : {
+              "Version": "2012-10-17",
+              "Statement": [{
+                      "Action": [
+                          "s3:ListAllMyBuckets",
+                          "s3:GetBucketLocation"
+                      ],
+                      "Effect": "Allow",
+                      "Resource": {"Ref": "S3_ARN"}
+                  }]
+          },
+          "PolicyName" : "CodeDeploy-EC2-S3",
+          "Roles" : [ String, ... ],
+      }
+    },
+    "T-U-T-S": {
+      "Type" : "AWS::IAM::Policy",
+      "Properties" : {
+        "PolicyDocument" : {
+              "Version": "2012-10-17",
+              "Statement": [{
+              "Effect": "Allow",
+              "Action": [
+                  "s3:PutObject"
+              ],
+              "Resource": [{"Ref": "S3_ARN"}]
+          }]
+        },
+        "PolicyName" : "Travis-Upload-To-S3",
+        "Roles" : [ String, ... ],
+      }
+    },
+    "T-CD": {
+      "Type" : "AWS::IAM::Policy",
+      "Properties" : {
+        "PolicyDocument" : {
+              "Version": "2012-10-17",
+              "Statement": [{{
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:RegisterApplicationRevision",
+                "codedeploy:GetApplicationRevision"
+              ],
+              "Resource": [
+                "arn:aws:codedeploy:AWS_REGION:AWS_ACCOUNT_ID:application:CODE_DEPLOY_APPLICATION_NAME"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:CreateDeployment",
+                "codedeploy:GetDeployment"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:GetDeploymentConfig"
+              ],
+              "Resource": [
+                "arn:aws:codedeploy:AWS_REGION:AWS_ACCOUNT_ID:deploymentconfig:CodeDeployDefault.OneAtATime",
+                "arn:aws:codedeploy:AWS_REGION:AWS_ACCOUNT_ID:deploymentconfig:CodeDeployDefault.HalfAtATime",
+                "arn:aws:codedeploy:AWS_REGION:AWS_ACCOUNT_ID:deploymentconfig:CodeDeployDefault.AllAtOnce"
+              ]
+            }]
+        },
+        "PolicyName" : "Travis-Code-Deploy",
+        "Roles" : [ String, ... ],
+      }
+    }
+  },
+  "Parameters": {
+      "S3_ARN": {
+        "Description" : "The ARN for S3 instance",
+        "Type": "String"
+      },
+      "AWS_REGION": {
+        "Description" : "AWS Region",
+        "Type": "String"
+      },
+      "ACCOUNT_ID": {
+        "Description" : "AWS Region",
+        "Type": "Number"
+      }
+    }
+}
