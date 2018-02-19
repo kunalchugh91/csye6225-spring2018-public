@@ -45,14 +45,6 @@ public class UploadController {
     @Autowired
     S3Services s3Services;
 
-    @Value("${jsa.aws.access_key_id}")
-    private String awsId;
-
-    @Value("${jsa.aws.secret_access_key}")
-    private String awsKey;
-
-    @Value("${jsa.s3.region}")
-    private String region;
 
     /*
     @GetMapping("/")
