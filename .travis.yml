@@ -11,3 +11,30 @@ notifications:
       - chugh.k@husky.neu.edu
   on_success: always
   on_failure: always
+
+branches:
+  only:
+    - Assignment_6
+after_success:
+  - cd ..
+  - mkdir codedeploy
+  - zip -r csye6225-web-app-$TRAVIS_JOB_NUMBER.zip webapp/target/csye6225.war infrastructure/aws/appspec.yml infrastructure/aws/applicationStop.sh infrastructure/aws/beforeInstall.sh infrastructure/aws/afterInstall.sh infrastructure/aws/applicationStart.sh
+  - ls -al
+  - mv csye6225-web-app-$TRAVIS_JOB_NUMBER.zip codedeploy/
+  - ls -al
+  - pwd
+  - cd codedeploy
+  - ls -al
+  - pwd
+  - cd ..
+  - pwd
+deploy:
+  - provider: s3
+    local_dir: codedeploy
+    bucket: $bucket_name
+    region: us-east-1
+    skip_cleanup: true
+    access_key_id: $access_key_id
+    secret_access_key: $secret_access_key
+    on:
+      branch: Assignment_6
