@@ -34,3 +34,7 @@ nbdist/
 
 #STS cache
 /webapp/.sts4-cache
+
+
+# VS Code
+.vscode
