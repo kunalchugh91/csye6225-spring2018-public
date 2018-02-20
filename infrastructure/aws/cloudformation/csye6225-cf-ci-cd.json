@@ -212,19 +212,24 @@
           "Ref": "CDOMAIN"
         }
       }
+    },
+    "CodeDeployApp": {
+      "Type": "AWS::CodeDeploy::Application",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "CDAPPNAME"
+        }
+      }
     }
   },
   "Parameters": {
     "S3ARN": {
-      "Description": "The ARN for S3 instance",
       "Type": "String"
     },
     "CDAPPNAME": {
-      "Description": "CodeDeploy Application name",
       "Type": "String"
     },
     "CDOMAIN": {
-      "Description": "CodeDeploy Domain",
       "Type": "String"
     }
   }
