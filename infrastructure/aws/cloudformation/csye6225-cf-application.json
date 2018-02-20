@@ -42,7 +42,13 @@
               ]
             ]
           }
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "MyEC2Instance"
+          }
+        ]
       }
     },
     "NewVolume": {
