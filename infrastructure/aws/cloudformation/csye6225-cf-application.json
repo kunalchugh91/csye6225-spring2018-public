@@ -9,7 +9,7 @@
         "DisableApiTermination": true,
         "AvailabilityZone": "us-east-1a",
         "SubnetId": {
-          "Ref": "SUBNETID1"
+          "Ref": "PUBLICSUBNETID"
         },
         "Volumes": [
           {
@@ -124,6 +124,9 @@
     }
   },
   "Parameters": {
+    "PUBLICSUBNETID":{
+      "Type": "String"
+    },
     "SUBNETID1": {
       "Description": "The subnet id",
       "Type": "String"
