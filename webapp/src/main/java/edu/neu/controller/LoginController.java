@@ -52,7 +52,7 @@ public class LoginController {
 		if (bindingResult.hasErrors()) {
 			modelAndView.setViewName("registration");
 		} else {
-			user.setPath("/profiles/default/defaultpic.jpeg");
+			user.setPath("csye6225/profiles/default/defaultpic.jpeg");
 			userService.saveUser(user);
 			modelAndView.addObject("successMessage", "User has been registered successfully");
 			modelAndView.addObject("user", new User());

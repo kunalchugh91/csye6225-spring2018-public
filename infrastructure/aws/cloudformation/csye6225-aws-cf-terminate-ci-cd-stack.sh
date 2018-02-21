@@ -16,17 +16,17 @@ then
 	exit 0
 fi
 
-EC2_ID=$(aws ec2 describe-instances --filter "Name=tag:aws:cloudformation:stack-name,Values=$1-application" "Name=instance-state-code,Values=16" --query 'Reservations[*].Instances[*].{id:InstanceId}' --output text)
+EC2_ID=$(aws ec2 describe-instances --filter "Name=tag:aws:cloudformation:stack-name,Values=$1-ci-cd" "Name=instance-state-code,Values=16" --query 'Reservations[*].Instances[*].{id:InstanceId}' --output text)
 
 # Command to disable Termination Protection, It will disable it on a specific Instance, hence the instance Id is required
 aws ec2 modify-instance-attribute --instance-id $EC2_ID --no-disable-api-termination
 
 echo "Deleting stack: $RC"
 
-aws cloudformation delete-stack --stack-name $1-application
+aws cloudformation delete-stack --stack-name $1-ci-cd
 
 echo "Stack deletion in progress. Please wait"
-RC=$(aws cloudformation wait stack-delete-complete --stack-name $1-application)
+RC=$(aws cloudformation wait stack-delete-complete --stack-name $1-ci-cd)
 
 if [ $? -eq 0 ]
 then
