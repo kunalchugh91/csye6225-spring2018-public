@@ -36,11 +36,9 @@
               "Action": [
                 "s3:PutObject"
               ],
-              "Resource": [
-                {
-                  "Ref": "S3ARN"
-                }
-              ]
+              "Resource": {
+                "Ref": "S3ARN"
+              }
             }
           ]
         },
@@ -227,6 +225,7 @@
         "ApplicationName": {
           "Ref": "CDAPPNAME"
         },
+        "DeploymentGroupName": "CSYE6225-CodeDeploymentGroup",
         "Ec2TagFilters": [
           {
             "Key": "Name",
