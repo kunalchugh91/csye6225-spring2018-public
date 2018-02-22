@@ -2,15 +2,15 @@ version: 0.0
 os: linux
 
 files:
-  - source: ./appspec.yml
+  - source: ./infrastructre/aws/appspec.yml
     destination: /home/ubuntu
-  - source: ./ApplicationStop.sh
+  - source: ./infrastructre/aws/ApplicationStop.sh
     destination: /home/ubuntu
-  - source: ./beforeInstall.sh
+  - source: ./infrastructre/aws/beforeInstall.sh
     destination: /home/ubuntu
-  - source: ./afterInstall.sh
+  - source: ./infrastructre/aws/afterInstall.sh
     destination: /home/ubuntu
-  - source: ./applicationStart.sh
+  - source: ./infrastructre/aws/applicationStart.sh
     destination: /home/ubuntu
   - source: ./webapp/target/csye6225.war
     destination: /var/lib/tomcat8/webapps
