@@ -4,31 +4,31 @@ os: linux
 files:
   - source: ./appspec.yml
     destination: /home/ubuntu
-  - source: ./infrastructre/aws/ApplicationStop.sh
+  - source: ./ApplicationStop.sh
     destination: /home/ubuntu
-  - source: ./infrastructre/aws/beforeInstall.sh
+  - source: ./beforeInstall.sh
     destination: /home/ubuntu
-  - source: ./infrastructre/aws/afterInstall.sh
+  - source: ./afterInstall.sh
     destination: /home/ubuntu
-  - source: ./infrastructre/aws/applicationStart.sh
+  - source: ./applicationStart.sh
     destination: /home/ubuntu
   - source: ./webapp/target/csye6225.war
     destination: /var/lib/tomcat8/webapps
 
 hooks:
   ApplicationStop:
-   - location: ./infrastructre/aws/applicationStop.sh
+   - location: ./applicationStop.sh
      timeout: 180
      runas: ubuntu
   BeforeInstall:
-   - location: ./infrastructre/aws/beforeInstall.sh
+   - location: ./beforeInstall.sh
      timeout: 180
      runas: ubuntu
   AfterInstall:
-   - location: ./infrastructre/aws/afterInstall.sh
+   - location: ./afterInstall.sh
      timeout: 180
      runas: ubuntu
   ApplicationStart:
-   - location: ./infrastructre/aws/applicationStart.sh
+   - location: ./applicationStart.sh
      timeout: 180
      runas: ubuntu
