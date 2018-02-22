@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 
 @Controller
 public class LoginController {
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -29,8 +29,8 @@ public class LoginController {
 
 		return modelAndView;
 	}
-	
-	
+
+
 	@RequestMapping(value="/registration", method = RequestMethod.GET)
 	public ModelAndView registration(){
 		ModelAndView modelAndView = new ModelAndView();
@@ -39,7 +39,7 @@ public class LoginController {
 		modelAndView.setViewName("registration");
 		return modelAndView;
 	}
-	
+
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
 		ModelAndView modelAndView = new ModelAndView();
@@ -52,16 +52,16 @@ public class LoginController {
 		if (bindingResult.hasErrors()) {
 			modelAndView.setViewName("registration");
 		} else {
-			user.setPath("/profiles/default/defaultpic.jpeg");
+			user.setPath("csye6225/profiles/default/defaultpic.jpeg");
 			userService.saveUser(user);
 			modelAndView.addObject("successMessage", "User has been registered successfully");
 			modelAndView.addObject("user", new User());
 			modelAndView.setViewName("registration");
-			
+
 		}
 		return modelAndView;
 	}
-	
+
 	@RequestMapping(value="/home", method = RequestMethod.GET)
 	public ModelAndView home(){
 		ModelAndView modelAndView = new ModelAndView();
@@ -73,12 +73,12 @@ public class LoginController {
 		modelAndView.addObject("userMessage", "Last Login "+time);
         modelAndView.addObject("aboutme", user.getAboutMe());
         if(user.getPath()== null){
-			user.setPath("/profiles/default/defaultpic.jpeg");
+			user.setPath("csye6225/profiles/default/defaultpic.jpeg");
 		}
 		modelAndView.addObject("picture", user.getPath());
 		modelAndView.setViewName("home");
 		return modelAndView;
 	}
-	
+
 
 }

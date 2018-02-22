@@ -16,16 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-
 @Controller
 public class UploadController {
 
@@ -45,14 +35,6 @@ public class UploadController {
     @Autowired
     S3Services s3Services;
 
-    @Value("${jsa.aws.access_key_id}")
-    private String awsId;
-
-    @Value("${jsa.aws.secret_access_key}")
-    private String awsKey;
-
-    @Value("${jsa.s3.region}")
-    private String region;
 
     /*
     @GetMapping("/")
@@ -129,14 +111,14 @@ public class UploadController {
                 s3Services.uploadFile(keyName, f.getPath()+'/'+originalFileName);
             }
 
-            user.setPath(imageFile.getPath());
+            user.setPath("csye6225"+imageFile.getPath());
                 userService.updateUser(user);
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully uploaded '" + originalFileName + "'");
 
         } catch (IOException e) {
-            user.setPath("/profiles/default/defaultpic.jpeg");
+            user.setPath("csye6225/profiles/default/defaultpic.jpeg");
             userService.updateUser(user);
             e.printStackTrace();
         }
@@ -166,7 +148,7 @@ public class UploadController {
                 f.delete();
             }
 
-            user.setPath("/profiles/default/defaultpic.jpeg");
+            user.setPath("csye6225/profiles/default/defaultpic.jpeg");
             userService.updateUser(user);
 
 
