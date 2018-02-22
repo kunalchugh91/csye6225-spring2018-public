@@ -240,6 +240,16 @@
           ]
         }
       }
+    },
+    "CodeDeployServiceRoleInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ {
+          "Ref": "CodeDeployEC2ServiceRole"
+        } ],
+        "InstanceProfileName": "CodeDeployServiceRoleInstanceProfile"
+      }
     }
   },
   "Parameters": {

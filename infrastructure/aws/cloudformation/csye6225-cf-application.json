@@ -20,6 +20,7 @@
           }
         ],
         "KeyName": "CSYE6225",
+        "SecurityGroupIds": [{"Ref": "SGID"}],
         "UserData": {
           "Fn::Base64": {
             "Fn::Join": [
@@ -43,6 +44,8 @@
             ]
           }
         },
+        "IamInstanceProfile":
+          "CodeDeployServiceRoleInstanceProfile",
         "Tags": [
           {
             "Key": "Name",
@@ -125,6 +128,9 @@
   },
   "Parameters": {
     "PUBLICSUBNETID":{
+      "Type": "String"
+    },
+    "SGID": {
       "Type": "String"
     },
     "SUBNETID1": {
