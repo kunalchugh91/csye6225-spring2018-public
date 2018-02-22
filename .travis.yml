@@ -40,7 +40,7 @@ deploy:
       branch: Assignment_6
   - provider: codedeploy
     access_key_id: $access_key_id
-    bucket: $bucket_name_webapp
+    bucket: $bucket_name_code_deploy
     key: csye6225-web-app-$TRAVIS_JOB_NUMBER.zip
     bundle_type: zip
     application: $application
