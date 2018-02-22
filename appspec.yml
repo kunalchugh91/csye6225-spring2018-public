@@ -4,7 +4,7 @@ os: linux
 files:
   - source: ./appspec.yml
     destination: /home/ubuntu
-  - source: ./ApplicationStop.sh
+  - source: ./applicationStop.sh
     destination: /home/ubuntu
   - source: ./beforeInstall.sh
     destination: /home/ubuntu
