@@ -17,18 +17,18 @@ files:
 
 hooks:
   ApplicationStop:
-   - location: ./applicationStop.sh
+   - location: ./infrastructre/aws/applicationStop.sh
      timeout: 180
      runas: ubuntu
   BeforeInstall:
-   - location: ./beforeInstall.sh
+   - location: ./infrastructre/aws/beforeInstall.sh
      timeout: 180
      runas: ubuntu
   AfterInstall:
-   - location: ./afterInstall.sh
+   - location: ./infrastructre/aws/afterInstall.sh
      timeout: 180
      runas: ubuntu
   ApplicationStart:
-   - location: ./applicationStart.sh
+   - location: ./infrastructre/aws/applicationStart.sh
      timeout: 180
      runas: ubuntu
