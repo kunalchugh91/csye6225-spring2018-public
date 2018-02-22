@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 
 files:
-  - source: ./infrastructre/aws/appspec.yml
+  - source: ./appspec.yml
     destination: /home/ubuntu
   - source: ./infrastructre/aws/ApplicationStop.sh
     destination: /home/ubuntu
