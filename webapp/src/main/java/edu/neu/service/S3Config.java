@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
 public class S3Config {
@@ -17,12 +17,16 @@ public class S3Config {
     @Bean
     public AmazonS3 s3client() {
 
-        AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
+        //AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
         // BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsId, awsKey);
         // AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
         //         .withRegion(Regions.fromName(region))
         //         .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
         //         .build();
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+                .withRegion("us-east-1")
+                .withCredentials(new InstanceProfileCredentialsProvider(false))
+                .build();
 
         return s3Client;
     }
