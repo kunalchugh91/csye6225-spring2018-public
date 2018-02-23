@@ -23,9 +23,6 @@
           ]
         },
         "PolicyName": "CodeDeployEC2S3",
-        "Users": [
-          "travis"
-        ],
         "Roles": [{
           "Ref": "CodeDeployEC2ServiceRole"
         }]
