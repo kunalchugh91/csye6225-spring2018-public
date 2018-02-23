@@ -1,6 +1,5 @@
 -- MySQL dump 10.13  Distrib 5.7.9, for Win64 (x86_64)
 --
--- Host: localhost    Database: spring-security-tutorial
 -- ------------------------------------------------------
 -- Server version	5.7.11-log
 
@@ -28,6 +27,8 @@ CREATE TABLE `role` (
   PRIMARY KEY (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+INSERT INTO `role` VALUES (1,'USER');
 
 
 --

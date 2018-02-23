@@ -23,14 +23,13 @@ public class S3ServicesImpl implements S3Services {
     @Autowired
     private AmazonS3 s3client;
 
-    @Value("${jsa.s3.bucket}")
     private String bucketName;
 
     @Override
     public void uploadFile(String keyName, String uploadFilePath) {
 
         try {
-
+            bucketName = System.getProperty("bucket.name");
             File file = new File(uploadFilePath);
             s3client.putObject(new PutObjectRequest(bucketName, keyName, file));
             logger.info("===================== Upload File - Done! =====================");
