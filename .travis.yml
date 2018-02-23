@@ -17,7 +17,7 @@ branches:
     - Assignment_6
 after_success:
   - cd ..
-  - mkdir codedeploy
+  - mkdir codedeploy #codedeploy folder made inside travis
   - cp ./infrastructure/aws/codedeploy/appspec.yml ./infrastructure/aws/codedeploy/beforeInstall.sh ./infrastructure/aws/codedeploy/afterInstall.sh ./infrastructure/aws/codedeploy/applicationStart.sh ./infrastructure/aws/codedeploy/applicationStop.sh ./
   - zip -r csye6225-web-app-$TRAVIS_JOB_NUMBER.zip webapp/target/csye6225.war ./appspec.yml ./applicationStop.sh ./beforeInstall.sh ./afterInstall.sh ./applicationStart.sh
   - ls -al
