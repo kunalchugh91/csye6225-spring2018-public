@@ -1,67 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Resources": {
-    "EC2Instance": {
-      "Type": "AWS::EC2::Instance",
-      "Properties": {
-        "ImageId": "ami-66506c1c",
-        "InstanceType": "t2.micro",
-        "DisableApiTermination": true,
-        "AvailabilityZone": "us-east-1a",
-        "SubnetId": {
-          "Ref": "PUBLICSUBNETID"
-        },
-        "Volumes": [
-          {
-            "VolumeId": {
-              "Ref": "NewVolume"
-            },
-            "Device": "/dev/sdk"
-          }
-        ],
-        "KeyName": "CSYE6225",
-        "SecurityGroupIds": [{"Ref": "SGID"}],
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": [
-              "",
-              [
-                "#!/bin/bash -xe \n",
-                "sudo apt-get update \n",
-                "sudo apt-get install openjdk-8-jdk -y\n",
-                "sudo apt-get install ruby -y \n",
-                "sudo apt-get install wget -y \n",
-                "sudo apt-get install python -y \n",
-                "sudo apt-get update \n",
-                "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install \n",
-                "sudo chmod +x ./install \n",
-                "sudo ./install auto \n",
-                "sudo service codedeploy-agent start \n",
-                "sudo apt-get install tomcat8 -y \n",
-                "sudo echo \"JAVA_OPTS=\\\"\\${JAVA_OPTS} -Dspring.profiles.active=aws\\\"\" >> /etc/default/tomcat8 \n",
-                "sudo service tomcat8 restart \n"
-              ]
-            ]
-          }
-        },
-        "IamInstanceProfile":
-          "CodeDeployServiceRoleInstanceProfile",
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "MyEC2Instance"
-          }
-        ]
-      }
-    },
-    "NewVolume": {
-      "Type": "AWS::EC2::Volume",
-      "Properties": {
-        "AvailabilityZone": "us-east-1a",
-        "Size": 16,
-        "VolumeType": "gp2"
-      }
-    },
     "DynamoDB": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
@@ -101,20 +40,100 @@
     "DBInstance": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
-        "DBName": "csye6225",
+        "DBName": "cloud",
         "Engine": "mysql",
         "EngineVersion": "5.6.37",
         "MultiAZ": "false",
         "PubliclyAccessible": "false",
         "StorageType": "gp2",
-        "MasterUsername": "csye6225master",
+        "MasterUsername": "root",
         "DBInstanceClass": "db.t2.medium",
         "DBInstanceIdentifier": "csye6225-spring2018",
         "AllocatedStorage": "10",
         "DBSubnetGroupName": {
           "Ref": "DBSubnetGroup"
         },
-        "MasterUserPassword": "csye6225password"
+        "MasterUserPassword": "root"
+      }
+    },
+    "EC2Instance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-66506c1c",
+        "InstanceType": "t2.micro",
+        "DisableApiTermination": true,
+        "AvailabilityZone": "us-east-1a",
+        "SubnetId": {
+          "Ref": "PUBLICSUBNETID"
+        },
+        "Volumes": [
+          {
+            "VolumeId": {
+              "Ref": "NewVolume"
+            },
+            "Device": "/dev/sdk"
+          }
+        ],
+        "KeyName": "CSYE6225",
+        "SecurityGroupIds": [{"Ref": "SGID"}],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -xe \n",
+                "sudo apt-get update \n",
+                "sudo apt-get install openjdk-8-jdk -y\n",
+                "sudo apt-get install ruby -y \n",
+                "sudo apt-get install wget -y \n",
+                "sudo apt-get install python -y \n",
+                "sudo apt-get update \n",
+                "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install \n",
+                "sudo chmod +x ./install \n",
+                "sudo ./install auto \n",
+                "sudo service codedeploy-agent start \n",
+                "echo '#!/bin/sh' >> /usr/share/tomcat8/bin/setenv.sh \n",
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.profiles.active=aws\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.url=jdbc:mysql://${DBInstance.Endpoint.Address}:3306/cloud\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.username=${DBUser}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.password=${DBPassword}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dbucket.name=${DOMAIN}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                },
+                "chmod +x /usr/share/tomcat8/bin/setenv.sh\n",
+                "chown tomcat8:tomcat8 /usr/share/tomcat8/bin/setenv.sh\n",
+                "chmod 777 -R /tmp\n",
+                "chmod 777 /var/lib/tomcat8\n",
+                "chmod 777 /var/lib/tomcat8/webapps\n",
+                "sudo service tomcat8 restart \n"
+              ]
+            ]
+          }
+        },
+        "IamInstanceProfile":
+          "CodeDeployServiceRoleInstanceProfile",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "MyEC2Instance"
+          }
+        ]
+      }
+    },
+    "NewVolume": {
+      "Type": "AWS::EC2::Volume",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "Size": 16,
+        "VolumeType": "gp2"
       }
     },
     "myBucket": {
@@ -131,6 +150,12 @@
       "Type": "String"
     },
     "SGID": {
+      "Type": "String"
+    },
+    "DBUser": {
+      "Type": "String"
+    },
+    "DBPassword": {
       "Type": "String"
     },
     "SUBNETID1": {

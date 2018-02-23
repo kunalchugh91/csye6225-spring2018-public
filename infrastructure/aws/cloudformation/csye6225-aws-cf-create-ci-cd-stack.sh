@@ -25,8 +25,6 @@ WEBAPP_DOMAIN="web-app."${DOMAIN_NAME%?}
 
 CD_DOMAIN="code-deploy."${DOMAIN_NAME%?}
 
-#AWS Region
-AWS_REGION="us-east-1a"
 
 # Account id for arn
 echo "Fetching user's account id"
