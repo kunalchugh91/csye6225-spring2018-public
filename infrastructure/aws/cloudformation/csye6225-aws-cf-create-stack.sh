@@ -50,9 +50,15 @@ PUBLIC_SUBNET=$(aws cloudformation list-stack-resources --stack-name $1-networki
 SUBNET_ID_1=$(aws cloudformation list-stack-resources --stack-name $1-networking --query 'StackResourceSummaries[?LogicalResourceId==`PrivateSubnet1`][PhysicalResourceId]' --output text)
 SUBNET_ID_2=$(aws cloudformation list-stack-resources --stack-name $1-networking --query 'StackResourceSummaries[?LogicalResourceId==`PrivateSubnet2`][PhysicalResourceId]' --output text)
 
-SG_ID=$(aws ec2 describe-security-groups --filters Name=ip-permission.from-port,Values=22 --query 'SecurityGroups[*].{Name:GroupId}' --output text)
+SGID=$(aws ec2 describe-security-groups --filters Name=ip-permission.from-port,Values=22 --query 'SecurityGroups[*].{Name:GroupId}[0]' --output text)
 
-aws cloudformation create-stack --stack-name $1-application --template-body file://./csye6225-cf-application.json --parameters ParameterKey=PUBLICSUBNETID,ParameterValue=$PUBLIC_SUBNET ParameterKey=SUBNETID1,ParameterValue=$SUBNET_ID_1 ParameterKey=SUBNETID2,ParameterValue=$SUBNET_ID_2 ParameterKey=DOMAIN,ParameterValue=$DOMAIN_NAME ParameterKey=SGID,ParameterValue=$SG_ID ParameterKey=DBUser,ParameterValue=root ParameterKey=DBPassword,ParameterValue=root
+DBSGID=$(aws ec2 describe-security-groups --filters Name=ip-permission.from-port,Values=3306 --query 'SecurityGroups[*].{Name:GroupId}[0]' --output text)
+echo $DBSGID
+
+DBUser=root
+DBPassword=masteruserpassword
+
+aws cloudformation create-stack --stack-name $1-application --template-body file://./csye6225-cf-application.json --parameters ParameterKey=PUBLICSUBNETID,ParameterValue=$PUBLIC_SUBNET ParameterKey=SUBNETID1,ParameterValue=$SUBNET_ID_1 ParameterKey=SUBNETID2,ParameterValue=$SUBNET_ID_2 ParameterKey=DOMAIN,ParameterValue=$DOMAIN_NAME ParameterKey=SGID,ParameterValue=$SGID ParameterKey=DBSGID,ParameterValue=$DBSGID ParameterKey=DBUser,ParameterValue=$DBUser ParameterKey=DBPassword,ParameterValue=$DBPassword
 
 aws cloudformation wait stack-create-complete --stack-name $1-application
 STACKDETAILS=$(aws cloudformation describe-stacks --stack-name $1-application --query Stacks[0].StackId --output text)
