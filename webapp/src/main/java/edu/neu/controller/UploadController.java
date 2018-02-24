@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Controller
@@ -75,13 +76,17 @@ public class UploadController {
         }
 
         try {
-                File directory;
+            File f = new File(UPLOADED_FOLDER + user.getId());
+            File imageFile = new File(f.getPath(), originalFileName);
 
-                // Get the file and save it somewhere
-                byte[] bytes = file.getBytes();
+            // Upload to s3
+            if(PROFILE_NAME.equals("aws")){
+                File filename = convertFromMultipart(file);
+                String keyName = "profiles/"+user.getId() +"/"+originalFileName;
+                s3Services.uploadFile(keyName, filename);
+            }
 
-                //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
-                File f = new File(UPLOADED_FOLDER + user.getId());
+            else{
 
                 if (f.exists()) {
                     for (String s : f.list()) {
@@ -95,21 +100,14 @@ public class UploadController {
                     }
                 }
 
-
-
-                    f.mkdir();
-                    f.setReadable(true, false);
-                    f.setWritable(true, false);
-                    File imageFile = new File(f.getPath(), originalFileName);
-                    file.transferTo(imageFile);
-                    imageFile.setReadable(true, false);
-                    imageFile.setWritable(true, false);
-
-            // Upload to s3
-            if(PROFILE_NAME.equals("aws")){
-                String keyName = "profiles/"+user.getId() +"/"+originalFileName;
-                s3Services.uploadFile(keyName, f.getPath()+'/'+originalFileName);
+                f.mkdir();
+                f.setReadable(true, false);
+                f.setWritable(true, false);                
+                file.transferTo(imageFile);
+                imageFile.setReadable(true, false);
+                imageFile.setWritable(true, false);
             }
+            
 
             user.setPath("csye6225"+imageFile.getPath());
                 userService.updateUser(user);
@@ -122,6 +120,10 @@ public class UploadController {
             userService.updateUser(user);
             e.printStackTrace();
         }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+          
 
         redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
 
@@ -192,6 +194,15 @@ public class UploadController {
         }
 
         return "redirect:/home";
+    }
+
+    public File convertFromMultipart(MultipartFile file) throws Exception {
+        File newFile = new File(file.getOriginalFilename());
+        newFile.createNewFile();
+        FileOutputStream fs = new FileOutputStream(newFile);
+        fs.write(file.getBytes());
+        fs.close();
+        return newFile;
     }
 
 }

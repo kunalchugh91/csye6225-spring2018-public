@@ -15,6 +15,9 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
+import java.io.File;
+
+
 @Service
 public class S3ServicesImpl implements S3Services {
 
@@ -26,11 +29,11 @@ public class S3ServicesImpl implements S3Services {
     private String bucketName;
 
     @Override
-    public void uploadFile(String keyName, String uploadFilePath) {
+    public void uploadFile(String keyName, File file) {
 
         try {
             bucketName = System.getProperty("bucket.name");
-            File file = new File(uploadFilePath);
+            // File file = new File(uploadFilePath);
             s3client.putObject(new PutObjectRequest(bucketName, keyName, file));
             logger.info("===================== Upload File - Done! =====================");
 
