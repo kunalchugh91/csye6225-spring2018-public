@@ -53,7 +53,7 @@
         "DBSubnetGroupName": {
           "Ref": "DBSubnetGroup"
         },
-        "MasterUserPassword": "root"
+        "MasterUserPassword": "masteruserpassword"
       }
     },
     "EC2Instance": {
@@ -92,6 +92,8 @@
                 "sudo chmod +x ./install \n",
                 "sudo ./install auto \n",
                 "sudo service codedeploy-agent start \n",
+                "sudo apt-get install tomcat8 -y\n",
+                "sudo service tomcat8 start\n",
                 "echo '#!/bin/sh' >> /usr/share/tomcat8/bin/setenv.sh \n",
                 {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.profiles.active=aws\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
@@ -109,7 +111,6 @@
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dbucket.name=${DOMAIN}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
                 },
                 "chmod +x /usr/share/tomcat8/bin/setenv.sh\n",
-                "chown tomcat8:tomcat8 /usr/share/tomcat8/bin/setenv.sh\n",
                 "chmod 777 -R /tmp\n",
                 "chmod 777 /var/lib/tomcat8\n",
                 "chmod 777 /var/lib/tomcat8/webapps\n",
