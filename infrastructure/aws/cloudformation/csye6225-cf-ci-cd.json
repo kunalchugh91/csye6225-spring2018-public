@@ -16,9 +16,11 @@
                 "s3:PutObject"
               ],
               "Effect": "Allow",
-              "Resource": {
-                "Ref": "S3ARN"
-              }
+              "Resource": [{
+                "Ref": "CDARN"
+              },{
+                "Ref": "WEBAPPARN"
+              }]
             }
           ]
         },
@@ -40,7 +42,7 @@
                 "s3:PutObject"
               ],
               "Resource": {
-                "Ref": "S3ARN"
+                "Ref": "CDARN"
               }
             }
           ]
@@ -253,7 +255,10 @@
     }
   },
   "Parameters": {
-    "S3ARN": {
+    "CDARN": {
+      "Type": "String"
+    },
+    "WEBAPPARN": {
       "Type": "String"
     },
     "CDAPPNAME": {
