@@ -3,6 +3,7 @@ package edu.neu.controller;
 import javax.validation.Valid;
 
 import edu.neu.model.User;
+import edu.neu.service.S3Services;
 import edu.neu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,8 +20,14 @@ import java.time.format.DateTimeFormatter;
 @Controller
 public class LoginController {
 
+	private String PROFILE_NAME;
+	private String bucketName;
+
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+    S3Services s3Services;
 
 	@RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
 	public ModelAndView login(){
@@ -64,6 +71,9 @@ public class LoginController {
 
 	@RequestMapping(value="/home", method = RequestMethod.GET)
 	public ModelAndView home(){
+		PROFILE_NAME = environment.getProperty("app.profile.name");
+		bucketName = System.getProperty("bucket.name");
+
 		ModelAndView modelAndView = new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.findUserByEmail(auth.getName());
@@ -75,6 +85,18 @@ public class LoginController {
         if(user.getPath()== null){
 			user.setPath("csye6225/profiles/default/defaultpic.jpeg");
 		}
+
+		// Download from bucket
+		if(PROFILE_NAME.equals("aws")){
+			String keyName ="https://s3.amazonaws.com/"+
+			bucketName+
+			"/"+
+			user.getPath();
+			
+			System.out.println("Key "+keyName);
+			s3Services.downloadFile(keyName, user.getPath());
+		}
+
 		modelAndView.addObject("picture", user.getPath());
 		modelAndView.setViewName("home");
 		return modelAndView;

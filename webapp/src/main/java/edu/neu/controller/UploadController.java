@@ -82,7 +82,7 @@ public class UploadController {
             // Upload to s3
             if(PROFILE_NAME.equals("aws")){
                 File filename = convertFromMultipart(file);
-                String keyName = "profiles/"+user.getId() +"/"+originalFileName;
+                String keyName = "csye6225/profiles/"+user.getId() +"/"+originalFileName;
                 s3Services.uploadFile(keyName, filename);
             }
 

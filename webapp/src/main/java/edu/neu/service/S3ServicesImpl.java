@@ -50,4 +50,26 @@ public class S3ServicesImpl implements S3Services {
         }
     }
 
+    @Override
+    public void downloadFile(String keyName, String fileLoc) {
+
+        try {
+            bucketName = System.getProperty("bucket.name");
+            File file = new File(fileLoc);
+            s3client.getObject(new GetObjectRequest(bucketName, keyName), file);
+            logger.info("===================== Download File - Done! =====================");
+
+        } catch (AmazonServiceException ase) {
+            logger.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");
+            logger.info("Error Message:    " + ase.getMessage());
+            logger.info("HTTP Status Code: " + ase.getStatusCode());
+            logger.info("AWS Error Code:   " + ase.getErrorCode());
+            logger.info("Error Type:       " + ase.getErrorType());
+            logger.info("Request ID:       " + ase.getRequestId());
+        } catch (AmazonClientException ace) {
+            logger.info("Caught an AmazonClientException: ");
+            logger.info("Error Message: " + ace.getMessage());
+        }
+    }
+
 }
