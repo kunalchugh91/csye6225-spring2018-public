@@ -7,6 +7,7 @@ import edu.neu.service.S3Services;
 import edu.neu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -25,6 +26,9 @@ public class LoginController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+    private Environment environment;
 
 	@Autowired
     S3Services s3Services;
