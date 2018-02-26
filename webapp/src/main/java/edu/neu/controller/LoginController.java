@@ -97,8 +97,9 @@ public class LoginController {
 			"/"+
 			user.getPath();
 			
-			System.out.println("Key "+keyName);
-			s3Services.downloadFile(keyName, user.getPath());
+			// System.out.println("Key "+keyName);
+			// s3Services.downloadFile(keyName, user.getPath());
+			user.setPath(keyName);
 		}
 
 		modelAndView.addObject("picture", user.getPath());

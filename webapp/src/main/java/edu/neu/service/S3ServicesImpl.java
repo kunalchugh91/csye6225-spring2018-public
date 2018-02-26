@@ -60,7 +60,7 @@ public class S3ServicesImpl implements S3Services {
             logger.info("===================== Download File - Done! =====================");
 
         } catch (AmazonServiceException ase) {
-            logger.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");
+            logger.info("Caught an AmazonServiceException from GET requests, rejected reasons:");
             logger.info("Error Message:    " + ase.getMessage());
             logger.info("HTTP Status Code: " + ase.getStatusCode());
             logger.info("AWS Error Code:   " + ase.getErrorCode());
