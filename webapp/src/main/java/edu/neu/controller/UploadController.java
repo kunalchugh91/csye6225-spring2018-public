@@ -33,16 +33,10 @@ public class UploadController {
 
     private String PROFILE_NAME;
 
+    private String bucketName;
+
     @Autowired
     S3Services s3Services;
-
-
-    /*
-    @GetMapping("/")
-    public String index() {
-        return "upload";
-    }
-    */
 
     @PostMapping("upload") // //new annotation since 4.3
     public String singleFileUpload(@RequestParam("file") MultipartFile file,
@@ -50,6 +44,7 @@ public class UploadController {
         UPLOADED_FOLDER = environment.getProperty("app.profile.path");
 
         PROFILE_NAME = environment.getProperty("app.profile.name");
+		bucketName = System.getProperty("bucket.name");
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
@@ -116,7 +111,15 @@ public class UploadController {
                     "You successfully uploaded '" + originalFileName + "'");
 
         } catch (IOException e) {
-            user.setPath("csye6225/profiles/default/defaultpic.jpeg");
+            if(PROFILE_NAME.equals("aws")){
+                String keyName ="https://s3.amazonaws.com/"+
+                    bucketName+
+                    "/"+
+                    "csye6225/profiles/default/defaultpic.jpeg";
+                user.setPath(keyName);
+            }else{
+                user.setPath("csye6225/profiles/default/defaultpic.jpeg");
+            }
             userService.updateUser(user);
             e.printStackTrace();
         }

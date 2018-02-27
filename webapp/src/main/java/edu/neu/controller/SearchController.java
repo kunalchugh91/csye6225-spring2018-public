@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Controller
 public class SearchController {
 
@@ -39,9 +42,18 @@ public class SearchController {
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("search");
         } else {
-            modelAndView.addObject("user", userExists);
-            //modelAndView.addObject("aboutMe", userExists.getAboutMe());
-            modelAndView.setViewName("search");
+            //modelAndView.addObject("user", userExists);
+             if(userExists.getPath()== null){
+                userExists.setPath("csye6225/profiles/default/defaultpic.jpeg");
+            }
+            modelAndView.addObject("aboutme", userExists.getAboutMe());
+            modelAndView.addObject("picture", userExists.getPath());
+            modelAndView.addObject("userName", "User: "  + userExists.getEmail());
+            String time = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss"));
+            modelAndView.addObject("userMessage", "Last Login "+time);
+            
+            modelAndView.setViewName("searchedUser");
 
         }
         return modelAndView;
