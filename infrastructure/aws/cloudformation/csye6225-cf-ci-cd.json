@@ -2,36 +2,57 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Resources": {
     "CodeDeployEC2S3": {
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::IAM::ManagedPolicy",
       "Properties": {
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
               "Action": [
-                "s3:ListAllMyBuckets",
-                "s3:GetBucketLocation",
-                "s3:DeleteObject",
-                "s3:GetObject",
-                "s3:PutObject"
+                "s3:List*",
+                "s3:Get*"
               ],
               "Effect": "Allow",
               "Resource": [{
                 "Ref": "CDARN"
-              },{
+              }]
+            }
+          ]
+        },
+        "ManagedPolicyName": "CodeDeployEC2S3",
+        "Roles": [{
+          "Ref": "CodeDeployEC2ServiceRole"
+        }]
+      }
+    },
+    "E2S3Access": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:Delete*",
+                "s3:Get*",
+                "s3:Put*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [{
                 "Ref": "WEBAPPARN"
               }]
             }
           ]
         },
-        "PolicyName": "CodeDeployEC2S3",
+        "ManagedPolicyName": "E2S3Access",
         "Roles": [{
           "Ref": "CodeDeployEC2ServiceRole"
         }]
       }
     },
     "TravisUploadToS3": {
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::IAM::ManagedPolicy",
       "Properties": {
         "PolicyDocument": {
           "Version": "2012-10-17",
@@ -47,14 +68,14 @@
             }
           ]
         },
-        "PolicyName": "TravisUploadToS3",
+        "ManagedPolicyName": "TravisUploadToS3",
         "Users": [
           "travis"
         ]
       }
     },
     "TravisCodeDeploy": {
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::IAM::ManagedPolicy",
       "Properties": {
         "PolicyDocument": {
           "Version": "2012-10-17",
@@ -153,7 +174,7 @@
             }
           ]
         },
-        "PolicyName": "TravisCodeDeploy",
+        "ManagedPolicyName": "TravisCodeDeploy",
         "Users": [
           "travis"
         ]

@@ -10,8 +10,10 @@ fi
 
 RC=$(aws cloudformation describe-stacks --stack-name $1-application --query Stacks[0].StackId --output text)
 
-if [ ! $? -eq 0 ]
+if [ $? -eq 0 ]
 then
+	continue
+else
 	echo "Stack $1 doesn't exist"
 	exit 0
 fi
