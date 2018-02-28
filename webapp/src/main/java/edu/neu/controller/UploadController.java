@@ -14,17 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Controller
 public class UploadController {
@@ -42,24 +33,10 @@ public class UploadController {
 
     private String PROFILE_NAME;
 
+    private String bucketName;
+
     @Autowired
     S3Services s3Services;
-
-    @Value("${jsa.aws.access_key_id}")
-    private String awsId;
-
-    @Value("${jsa.aws.secret_access_key}")
-    private String awsKey;
-
-    @Value("${jsa.s3.region}")
-    private String region;
-
-    /*
-    @GetMapping("/")
-    public String index() {
-        return "upload";
-    }
-    */
 
     @PostMapping("upload") // //new annotation since 4.3
     public String singleFileUpload(@RequestParam("file") MultipartFile file,
@@ -67,6 +44,7 @@ public class UploadController {
         UPLOADED_FOLDER = environment.getProperty("app.profile.path");
 
         PROFILE_NAME = environment.getProperty("app.profile.name");
+		bucketName = System.getProperty("bucket.name");
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
@@ -93,13 +71,17 @@ public class UploadController {
         }
 
         try {
-                File directory;
+            File f = new File(UPLOADED_FOLDER + user.getId());
+            File imageFile = new File(f.getPath(), originalFileName);
 
-                // Get the file and save it somewhere
-                byte[] bytes = file.getBytes();
+            // Upload to s3
+            if(PROFILE_NAME.equals("aws")){
+                File filename = convertFromMultipart(file);
+                String keyName = "csye6225/profiles/"+user.getId() +"/"+originalFileName;
+                s3Services.uploadFile(keyName, filename);
+            }
 
-                //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
-                File f = new File(UPLOADED_FOLDER + user.getId());
+            else{
 
                 if (f.exists()) {
                     for (String s : f.list()) {
@@ -113,33 +95,38 @@ public class UploadController {
                     }
                 }
 
-
-
-                    f.mkdir();
-                    f.setReadable(true, false);
-                    f.setWritable(true, false);
-                    File imageFile = new File(f.getPath(), originalFileName);
-                    file.transferTo(imageFile);
-                    imageFile.setReadable(true, false);
-                    imageFile.setWritable(true, false);
-
-            // Upload to s3
-            if(PROFILE_NAME.equals("aws")){
-                String keyName = "profiles/"+user.getId() +"/"+originalFileName;
-                s3Services.uploadFile(keyName, f.getPath()+'/'+originalFileName);
+                f.mkdir();
+                f.setReadable(true, false);
+                f.setWritable(true, false);                
+                file.transferTo(imageFile);
+                imageFile.setReadable(true, false);
+                imageFile.setWritable(true, false);
             }
+            
 
-            user.setPath(imageFile.getPath());
+            user.setPath("csye6225"+imageFile.getPath());
                 userService.updateUser(user);
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully uploaded '" + originalFileName + "'");
 
         } catch (IOException e) {
-            user.setPath("/profiles/default/defaultpic.jpeg");
+            if(PROFILE_NAME.equals("aws")){
+                String keyName ="https://s3.amazonaws.com/"+
+                    bucketName+
+                    "/"+
+                    "csye6225/profiles/default/defaultpic.jpeg";
+                user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
+            }else{
+                user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
+            }
             userService.updateUser(user);
             e.printStackTrace();
         }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+          
 
         redirectAttributes.addFlashAttribute("aboutme", user.getAboutMe());
 
@@ -153,22 +140,29 @@ public class UploadController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
 
+        PROFILE_NAME = environment.getProperty("app.profile.name");
 
         try {
-
-            //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
-            File f = new File(UPLOADED_FOLDER + user.getId());
-            if (f.exists()){
-                for(String s : f.list()){
-                    File fi = new File(f.getPath(), s);
-                    if (fi.exists() && fi.isFile()) fi.delete();
+            if(PROFILE_NAME.equals("aws")){
+                // String filename = UPLOADED_FOLDER + user.getId();
+                s3Services.deleteFile(user.getPath());
+                user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
+            }
+            else{
+                //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
+                File f = new File(UPLOADED_FOLDER + user.getId());
+                if (f.exists()){
+                    for(String s : f.list()){
+                        File fi = new File(f.getPath(), s);
+                        if (fi.exists() && fi.isFile()) fi.delete();
+                    }
+                    f.delete();
                 }
-                f.delete();
+                user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
             }
 
-            user.setPath("/profiles/default/defaultpic.jpeg");
+            
             userService.updateUser(user);
-
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully deleted profile picture");
@@ -210,6 +204,15 @@ public class UploadController {
         }
 
         return "redirect:/home";
+    }
+
+    public File convertFromMultipart(MultipartFile file) throws Exception {
+        File newFile = new File(file.getOriginalFilename());
+        newFile.createNewFile();
+        FileOutputStream fs = new FileOutputStream(newFile);
+        fs.write(file.getBytes());
+        fs.close();
+        return newFile;
     }
 
 }
