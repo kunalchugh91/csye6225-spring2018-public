@@ -89,7 +89,8 @@ public class LoginController {
         modelAndView.addObject("aboutme", user.getAboutMe());
         
 		// Download from bucket
-		if(PROFILE_NAME.equals("aws") && !("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH".equals(user.getPath()){
+		if(PROFILE_NAME.equals("aws") && 
+		!("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH").equals(user.getPath())){
 			String keyName ="https://s3.amazonaws.com/"+
 			bucketName+
 			"/"+
