@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.*;
 
 import java.io.File;
 
@@ -34,7 +35,7 @@ public class S3ServicesImpl implements S3Services {
         try {
             bucketName = System.getProperty("bucket.name");
             // File file = new File(uploadFilePath);
-            s3client.putObject(new PutObjectRequest(bucketName, keyName, file));
+            s3client.putObject(new PutObjectRequest(bucketName, keyName, file).withCannedAcl(CannedAccessControlList.PublicRead));
             logger.info("===================== Upload File - Done! =====================");
 
         } catch (AmazonServiceException ase) {
