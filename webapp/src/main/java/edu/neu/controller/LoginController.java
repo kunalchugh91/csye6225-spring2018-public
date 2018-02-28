@@ -65,7 +65,7 @@ public class LoginController {
 		} else {
 			user.setPath("csye6225/profiles/default/defaultpic.jpeg");
 			if(PROFILE_NAME.equals("aws")){
-				if(user.getPath().equals()){
+				if(user.getPath().equals("csye6225/profiles/default/defaultpic.jpeg")){
 					user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
 				}
 			}
@@ -97,7 +97,7 @@ public class LoginController {
 
 		// Download from bucket
 		if(PROFILE_NAME.equals("aws")){
-			if(user.getPath().equals()){
+			if(user.getPath().equals("csye6225/profiles/default/defaultpic.jpeg")){
 				user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
 			}else{
 			String keyName ="https://s3.amazonaws.com/"+

@@ -144,8 +144,8 @@ public class UploadController {
 
         try {
             if(PROFILE_NAME.equals("aws")){
-                filename = UPLOADED_FOLDER + user.getId();
-                s3Services.deleteFile(keyName, filename);
+                String filename = UPLOADED_FOLDER + user.getId();
+                s3Services.deleteFile(filename);
                 user.setPath("csye6225/profiles/default/defaultpic.jpeg");
             }
             else{

@@ -13,6 +13,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 
@@ -52,7 +53,7 @@ public class S3ServicesImpl implements S3Services {
     }
 
     @Override
-    public void deleteFile(String keyName, String fileLoc) {
+    public void deleteFile(String keyName) {
 
         try {
             bucketName = System.getProperty("bucket.name");
