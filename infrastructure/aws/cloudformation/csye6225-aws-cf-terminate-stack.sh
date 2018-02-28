@@ -10,8 +10,10 @@ fi
 
 RC=$(aws cloudformation describe-stacks --stack-name $1-application --query Stacks[0].StackId --output text)
 
-if [$RC -eq 0]
+if [ $? -eq 0 ]
 then
+	continue
+else
 	echo "Stack $1 doesn't exist"
 	exit 0
 fi
@@ -20,6 +22,22 @@ EC2_ID=$(aws ec2 describe-instances --filter "Name=tag:aws:cloudformation:stack-
 
 # Command to disable Termination Protection, It will disable it on a specific Instance, hence the instance Id is required
 aws ec2 modify-instance-attribute --instance-id $EC2_ID --no-disable-api-termination
+
+# Domain name for ARN
+echo "Fetching domain name from Route 53"
+DOMAIN_NAME=$(aws route53 list-hosted-zones --query HostedZones[0].Name --output text)
+
+# Emptying the code-deploy.$DOMAIN bucket
+echo "Emptying the web app bucket"
+RC=$(aws s3 rm s3://"web-app."${DOMAIN_NAME%?} --recursive)
+
+if [ $? -eq 0 ]
+then
+  echo "Bucket successfully emptied"
+else
+ 	echo "Emptying of bucket failed"
+ 	exit 1
+fi
 
 echo "Deleting stack: $RC"
 

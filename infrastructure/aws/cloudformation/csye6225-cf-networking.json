@@ -96,8 +96,8 @@
               },
               {
                    "IpProtocol" : "tcp",
-                   "FromPort" : "80",
-                   "ToPort" : "80",
+                   "FromPort" : "8080",
+                   "ToPort" : "8080",
                    "CidrIp" : "0.0.0.0/0"
                 },
                 {
@@ -112,7 +112,6 @@
         "EC2SecurityGroupDBServer":{
           "Type" : "AWS::EC2::SecurityGroup",
           "Properties" : {
-             "GroupName" : "csye6225-rds",
              "GroupDescription" : "Security group for DB server",
              "SecurityGroupIngress" : [ {
                  "IpProtocol" : "tcp",
@@ -120,7 +119,8 @@
                  "ToPort" : "3306",
                  "SourceSecurityGroupId" : { "Ref": "EC2SecurityGroupWebServer" }
           }],
-          "VpcId" : { "Ref": "VPC" }
+          "VpcId" : { "Ref": "VPC" },
+          "Tags": [{"Key": "Name", "Value": "csye6225-rds"}]
         }
       }
     },
