@@ -44,7 +44,7 @@ public class SearchController {
         } else {
             //modelAndView.addObject("user", userExists);
              if(userExists.getPath()== null){
-                userExists.setPath("csye6225/profiles/default/defaultpic.jpeg");
+                userExists.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
             }
             modelAndView.addObject("aboutme", userExists.getAboutMe());
             modelAndView.addObject("picture", userExists.getPath());

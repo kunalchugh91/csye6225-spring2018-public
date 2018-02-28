@@ -116,9 +116,9 @@ public class UploadController {
                     bucketName+
                     "/"+
                     "csye6225/profiles/default/defaultpic.jpeg";
-                user.setPath(keyName);
+                user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
             }else{
-                user.setPath("csye6225/profiles/default/defaultpic.jpeg");
+                user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
             }
             userService.updateUser(user);
             e.printStackTrace();
@@ -144,9 +144,9 @@ public class UploadController {
 
         try {
             if(PROFILE_NAME.equals("aws")){
-                String filename = UPLOADED_FOLDER + user.getId();
-                s3Services.deleteFile(filename);
-                user.setPath("csye6225/profiles/default/defaultpic.jpeg");
+                // String filename = UPLOADED_FOLDER + user.getId();
+                s3Services.deleteFile(user.getPath());
+                user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
             }
             else{
                 //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
@@ -158,7 +158,7 @@ public class UploadController {
                     }
                     f.delete();
                 }
-                user.setPath("csye6225/profiles/default/defaultpic.jpeg");
+                user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
             }
 
             
