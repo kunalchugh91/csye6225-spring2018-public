@@ -87,17 +87,18 @@ public class LoginController {
 				.format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss"));
 		modelAndView.addObject("userMessage", "Last Login "+time);
         modelAndView.addObject("aboutme", user.getAboutMe());
-        if(user.getPath()== null){
-			user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
-		}
-
+        
 		// Download from bucket
-		if(PROFILE_NAME.equals("aws")){
+		if(PROFILE_NAME.equals("aws") && user.getPath() != null){
 			String keyName ="https://s3.amazonaws.com/"+
 			bucketName+
 			"/"+
 			user.getPath();
 			user.setPath(keyName);
+		}
+
+		if(user.getPath()== null){
+			user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
 		}
 
 		modelAndView.addObject("picture", user.getPath());
