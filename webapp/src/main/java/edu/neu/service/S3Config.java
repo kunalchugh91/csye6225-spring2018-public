@@ -17,17 +17,7 @@ public class S3Config {
     @Bean
     public AmazonS3 s3client() {
 
-        //AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
-        // BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsId, awsKey);
-        // AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-        //         .withRegion(Regions.fromName(region))
-        //         .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-        //         .build();
-        AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                .withRegion("us-east-1")
-                .withCredentials(new InstanceProfileCredentialsProvider(false))
-                .build();
-
+        AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
         return s3Client;
     }
 }

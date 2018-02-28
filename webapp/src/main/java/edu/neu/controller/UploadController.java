@@ -140,22 +140,27 @@ public class UploadController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
 
+        PROFILE_NAME = environment.getProperty("app.profile.name");
 
         try {
+            if(PROFILE_NAME.equals("aws")){
 
-            //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
-            File f = new File(UPLOADED_FOLDER + user.getId());
-            if (f.exists()){
-                for(String s : f.list()){
-                    File fi = new File(f.getPath(), s);
-                    if (fi.exists() && fi.isFile()) fi.delete();
+            }
+            else{
+                //Path path = Paths.get(UPLOADED_FOLDER + user.getId() +'/'+ file.getOriginalFilename());
+                File f = new File(UPLOADED_FOLDER + user.getId());
+                if (f.exists()){
+                    for(String s : f.list()){
+                        File fi = new File(f.getPath(), s);
+                        if (fi.exists() && fi.isFile()) fi.delete();
+                    }
+                    f.delete();
                 }
-                f.delete();
+                user.setPath("csye6225/profiles/default/defaultpic.jpeg");
             }
 
-            user.setPath("csye6225/profiles/default/defaultpic.jpeg");
+            
             userService.updateUser(user);
-
 
             redirectAttributes.addFlashAttribute("message",
                     "You successfully deleted profile picture");
