@@ -64,6 +64,11 @@ public class LoginController {
 			modelAndView.setViewName("registration");
 		} else {
 			user.setPath("csye6225/profiles/default/defaultpic.jpeg");
+			if(PROFILE_NAME.equals("aws")){
+				if(user.getPath().equals()){
+					user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
+				}
+			}
 			userService.saveUser(user);
 			modelAndView.addObject("successMessage", "User has been registered successfully");
 			modelAndView.addObject("user", new User());
@@ -92,14 +97,15 @@ public class LoginController {
 
 		// Download from bucket
 		if(PROFILE_NAME.equals("aws")){
+			if(user.getPath().equals()){
+				user.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
+			}else{
 			String keyName ="https://s3.amazonaws.com/"+
 			bucketName+
 			"/"+
 			user.getPath();
-			
-			// System.out.println("Key "+keyName);
-			// s3Services.downloadFile(keyName, user.getPath());
 			user.setPath(keyName);
+			}
 		}
 
 		modelAndView.addObject("picture", user.getPath());

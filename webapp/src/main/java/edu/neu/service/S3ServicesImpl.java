@@ -52,12 +52,11 @@ public class S3ServicesImpl implements S3Services {
     }
 
     @Override
-    public void downloadFile(String keyName, String fileLoc) {
+    public void deleteFile(String keyName, String fileLoc) {
 
         try {
             bucketName = System.getProperty("bucket.name");
-            File file = new File(fileLoc);
-            s3client.getObject(new GetObjectRequest(bucketName, keyName), file);
+            s3client.deleteObject(new DeleteObjectRequest(bucketName, keyName));
             logger.info("===================== Download File - Done! =====================");
 
         } catch (AmazonServiceException ase) {

@@ -17,7 +17,11 @@ public class S3Config {
     @Bean
     public AmazonS3 s3client() {
 
-        AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+                .withRegion("us-east-1")
+                .withCredentials(new InstanceProfileCredentialsProvider(false))
+                .build();
+
         return s3Client;
     }
 }
