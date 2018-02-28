@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Controller
 public class SearchController {
@@ -30,23 +31,29 @@ public class SearchController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public ModelAndView searchUser(@ModelAttribute("user") User user, BindingResult bindingResult) {
-        System.out.println("1" + user.getEmail());
+        
         ModelAndView modelAndView = new ModelAndView();
         User userExists = userService.findUserByEmail(user.getEmail());
         if (userExists == null) {
             bindingResult
                     .rejectValue("email", "error.user",
                             "No user with this email");
-            System.out.println("3");
         }
         if (bindingResult.hasErrors()) {
             modelAndView.setViewName("search");
-            System.out.println("4");
         } else {
-            modelAndView.addObject("user", userExists);
-            //modelAndView.addObject("aboutMe", userExists.getAboutMe());
-            System.out.println("2" + userExists.getAboutMe());
-            modelAndView.setViewName("search");
+            //modelAndView.addObject("user", userExists);
+             if(userExists.getPath()== null){
+                userExists.setPath("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY-cYNxqLIgGM2GtDUUWlw0BFz9v_M8pl-YUXsfvVHFPmUAhMH");
+            }
+            modelAndView.addObject("aboutme", userExists.getAboutMe());
+            modelAndView.addObject("picture", userExists.getPath());
+            modelAndView.addObject("userName", "User: "  + userExists.getEmail());
+            String time = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss"));
+            modelAndView.addObject("userMessage", "Last Login "+time);
+            
+            modelAndView.setViewName("searchedUser");
 
         }
         return modelAndView;

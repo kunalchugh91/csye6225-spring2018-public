@@ -32,4 +32,9 @@ nbdist/
 /jmeter/Login users.jmx
 /jmeter/Register users.jmx
 
-/webapp/src/main/resources/application-neel.properties
+#STS cache
+/webapp/.sts4-cache
+
+
+# VS Code
+.vscode
