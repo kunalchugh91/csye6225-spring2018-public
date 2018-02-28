@@ -54,6 +54,7 @@ public class LoginController {
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
 		ModelAndView modelAndView = new ModelAndView();
+		PROFILE_NAME = environment.getProperty("app.profile.name");
 		User userExists = userService.findUserByEmail(user.getEmail());
 		if (userExists != null) {
 			bindingResult
