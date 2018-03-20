@@ -11,3 +11,44 @@ notifications:
       - chugh.k@husky.neu.edu
   on_success: always
   on_failure: always
+
+branches:
+  only:
+    - Assignment_6
+after_success:
+  - cd ..
+  - mkdir codedeploy #codedeploy folder made inside travis
+  - cp ./infrastructure/aws/codedeploy/appspec.yml ./infrastructure/aws/codedeploy/beforeInstall.sh ./infrastructure/aws/codedeploy/afterInstall.sh ./infrastructure/aws/codedeploy/applicationStart.sh ./infrastructure/aws/codedeploy/applicationStop.sh ./
+  - zip -r csye6225-web-app-$TRAVIS_JOB_NUMBER.zip webapp/target/csye6225.war ./appspec.yml ./applicationStop.sh ./beforeInstall.sh ./afterInstall.sh ./applicationStart.sh
+  - ls -al
+  - mv csye6225-web-app-$TRAVIS_JOB_NUMBER.zip codedeploy/
+  - ls -al
+  - pwd
+  - rm ./appspec.yml ./applicationStop.sh ./beforeInstall.sh ./afterInstall.sh ./applicationStart.sh
+  - cd codedeploy
+  - ls -al
+  - pwd
+  - cd ..
+  - pwd
+deploy:
+  - provider: s3
+    local_dir: codedeploy
+    bucket: $bucket_name_code_deploy
+    region: us-east-1
+    skip_cleanup: true
+    access_key_id: $access_key_id
+    secret_access_key: $secret_access_key
+    on:
+      all_branches: true
+  - provider: codedeploy
+    access_key_id: $access_key_id
+    bucket: $bucket_name_code_deploy
+    key: csye6225-web-app-$TRAVIS_JOB_NUMBER.zip
+    bundle_type: zip
+    application: $application
+    deployment_group: $deployment_group
+    region: us-east-1
+    secret_access_key: $secret_access_key
+    wait-until-deployed: true
+    on:
+      all_branches: true
