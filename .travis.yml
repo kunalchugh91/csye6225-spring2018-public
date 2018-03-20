@@ -12,9 +12,7 @@ notifications:
   on_success: always
   on_failure: always
 
-branches:
-  only:
-    - Assignment_6
+
 after_success:
   - cd ..
   - mkdir codedeploy #codedeploy folder made inside travis
