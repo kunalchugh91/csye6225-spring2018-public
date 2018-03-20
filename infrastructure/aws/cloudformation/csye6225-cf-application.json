@@ -115,7 +115,11 @@
                 "chmod 777 -R /tmp\n",
                 "chmod 777 /var/lib/tomcat8\n",
                 "chmod 777 /var/lib/tomcat8/webapps\n",
-                "sudo service tomcat8 restart \n"
+                "sudo service tomcat8 restart \n",
+                "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O\n",
+                "echo ' ' >> /home/ubuntu/awslogs.conf\n",
+                "sudo python ./awslogs-agent-setup.py --region us-east-1 --non-interactive --configfile=/home/ubuntu/awslogs.conf\n",
+                "sudo rm /home/ubuntu/awslogs.conf"
               ]
             ]
           }
@@ -150,11 +154,30 @@
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
         "DisplayName" : "MySNSTopic",
-        "Subscription" : [{
-          "Endpoint" : { "Fn::GetAtt" : [{ "Ref": "LambdaName" }, "Arn" ]},
-          "Protocol" : "lambda"
-        }],
         "TopicName" : "PasswordResetSNSTopic"
+      }
+    },
+    "LogRolePolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:logs:*:*:*"
+              ]
+            }
+          ]
+        },
+        "ManagedPolicyName": {"Ref": "LOGROLEPOLICYNAME"}
       }
     }
   },
@@ -186,8 +209,7 @@
       "Description": "The domain name",
       "Type": "String"
     },
-    "LambdaName": {
-      "Description": "Logical Name of lambda function",
+    "LOGROLEPOLICYNAME": {
       "Type": "String"
     }
   }
