@@ -86,4 +86,50 @@
           "Type": "String"
         }
       }
+    },
+    "SNSTopic": {
+  		"Type" : "AWS::SNS::Topic",
+  		"Properties" : {
+    		"DisplayName" : "MySNSTopic",
+    		"Subscription" : [{
+  				"Endpoint" : { "Fn::GetAtt" : [{ "Ref": "LambdaName" }, "Arn" ]},
+  				"Protocol" : "lambda"
+				}],
+    		"TopicName" : "SNSLambdaTopic"
+  		}
+		}
+  },
+  "Parameters": {
+    "PUBLICSUBNETID":{
+      "Type": "String"
+    },
+    "SGID": {
+      "Type": "String"
+    },
+    "DBSGID": {
+      "Type": "String"
+    },
+    "DBUser": {
+      "Type": "String"
+    },
+    "DBPassword": {
+      "Type": "String"
+    },
+    "SUBNETID1": {
+      "Description": "The subnet id",
+      "Type": "String"
+    },
+    "SUBNETID2": {
+      "Description": "The subnet id",
+      "Type": "String"
+    },
+    "DOMAIN": {
+      "Description": "The domain name",
+      "Type": "String"
+    },
+    "LambdaName": {
+    	"Description": "Logical Name of lambda function",
+    	"Type": "String"
+    }
+  }
 }
