@@ -8,8 +8,6 @@ files:
     destination: /home/ubuntu
   - source: ./beforeInstall.sh
     destination: /home/ubuntu
-  - source: ./afterInstall.sh
-    destination: /home/ubuntu
   - source: ./applicationStart.sh
     destination: /home/ubuntu
   - source: ./webapp/target/csye6225.war
@@ -19,7 +17,7 @@ files:
   - source: ./awslogs.conf
     destination: /home/ubuntu
 
-    
+
 hooks:
   ApplicationStop:
    - location: ./applicationStop.sh
