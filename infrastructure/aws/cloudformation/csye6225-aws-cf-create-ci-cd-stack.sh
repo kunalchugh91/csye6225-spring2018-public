@@ -30,7 +30,7 @@ CD_DOMAIN="code-deploy."${DOMAIN_NAME%?}
 echo "Fetching user's account id"
 ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
 
-RC=$(aws cloudformation create-stack --stack-name $1-ci-cd --capabilities "CAPABILITY_NAMED_IAM" --template-body file://./csye6225-cf-ci-cd.json --parameters ParameterKey=CDARN,ParameterValue=arn:aws:s3:::$CD_DOMAIN/* ParameterKey=WEBAPPARN,ParameterValue=arn:aws:s3:::$WEBAPP_DOMAIN/* ParameterKey=CDAPPNAME,ParameterValue=CSYE6225 ParameterKey=CDOMAIN,ParameterValue=$CD_DOMAIN ParameterKey=LAMBDAUSERROLE,ParameterValue=LambdaExecutionRole)
+RC=$(aws cloudformation create-stack --stack-name $1-ci-cd --capabilities "CAPABILITY_NAMED_IAM" --template-body file://./csye6225-cf-ci-cd.json --parameters ParameterKey=CDARN,ParameterValue=arn:aws:s3:::$CD_DOMAIN/* ParameterKey=WEBAPPARN,ParameterValue=arn:aws:s3:::$WEBAPP_DOMAIN/* ParameterKey=CDAPPNAME,ParameterValue=CSYE6225 ParameterKey=CDOMAIN,ParameterValue=$CD_DOMAIN ParameterKey=LAMBDAUSERROLE,ParameterValue=LambdaExecutionRole ParameterKey=LOGROLEPOLICYNAME,ParameterValue=LogRolePolicy)
 
 echo "CI stack creation in progress. Please wait"
 aws cloudformation wait stack-create-complete --stack-name $1-ci-cd

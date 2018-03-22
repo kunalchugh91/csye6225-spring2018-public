@@ -199,6 +199,7 @@
             }
           ]
         },
+        "ManagedPolicyArns": [{"Ref": "LogRolePolicy"}],
         "RoleName": "CodeDeployEC2ServiceRole"
       }
     },
@@ -264,6 +265,29 @@
         }
       }
     },
+    "LogRolePolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:logs:*:*:*"
+              ]
+            }
+          ]
+        },
+        "ManagedPolicyName": {"Ref": "LOGROLEPOLICYNAME"}
+      }
+    },
     "CodeDeployServiceRoleInstanceProfile": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
@@ -317,6 +341,9 @@
       "Type": "String"
     },
     "LAMBDAUSERROLE": {
+      "Type": "String"
+    },
+    "LOGROLEPOLICYNAME": {
       "Type": "String"
     }
   }

@@ -156,29 +156,6 @@
         "DisplayName" : "MySNSTopic",
         "TopicName" : "PasswordResetSNSTopic"
       }
-    },
-    "LogRolePolicy": {
-      "Type": "AWS::IAM::ManagedPolicy",
-      "Properties": {
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-                "logs:DescribeLogStreams"
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                "arn:aws:logs:*:*:*"
-              ]
-            }
-          ]
-        },
-        "ManagedPolicyName": {"Ref": "LOGROLEPOLICYNAME"}
-      }
     }
   },
   "Parameters": {
@@ -207,9 +184,6 @@
     },
     "DOMAIN": {
       "Description": "The domain name",
-      "Type": "String"
-    },
-    "LOGROLEPOLICYNAME": {
       "Type": "String"
     }
   }
