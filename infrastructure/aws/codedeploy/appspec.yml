@@ -17,8 +17,9 @@ files:
   - source: ./cloudWatchRestart.sh
     destination: /home/ubuntu
   - source: ./awslogs.conf
-    destination: /var/awslogs/etc
+    destination: /home/ubuntu
 
+    
 hooks:
   ApplicationStop:
    - location: ./applicationStop.sh
