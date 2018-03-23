@@ -2,26 +2,32 @@ package edu.neu.controller;
 
 import edu.neu.model.User;
 import edu.neu.service.UserService;
+import edu.neu.service.SNSMessage;
+
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.core.env.Environment;
 
 import com.amazonaws.services.sns.*;
 import com.amazonaws.auth.*;
 import com.amazonaws.regions.*;
 import com.amazonaws.services.sns.model.*;
 
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import java.util.*;
-
 @Controller
 public class ResetController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Environment environment;
 
     @RequestMapping(value={"/reset"}, method = RequestMethod.GET)
     public ModelAndView goToResetPage(){
@@ -38,7 +44,7 @@ public class ResetController {
         
         try{
             String email = user.getEmail();
-            System.out.println("email "+email);
+            String domain;
             AmazonSNSClient snsClient = new AmazonSNSClient(new DefaultAWSCredentialsProviderChain());
             snsClient.setRegion(Region.getRegion(Regions.US_EAST_1));
 
@@ -48,7 +54,22 @@ public class ResetController {
             topicArns.addAll(result.getTopics());
 
             for (Topic topic : topicArns) {
-                System.out.println("Topic ARN "+topic.getTopicArn());
+                if("PasswordResetSNSTopic".equals(topic.getTopicArn())){
+                    domain = System.getProperty("domain.name");
+                    System.out.println("Domain "+domain);
+
+                    // Initialize example message class
+                    SNSMessage message = new SNSMessage("Reset Password");
+
+                    // Add message attribute with string value
+                    message.addAttribute("to_email", email);
+                    message.addAttribute("from_email", "reset_password@"+domain);
+
+                    // Publish message
+                    message.publish(snsClient, topic.getTopicArn());
+
+                    break;
+                }
             }
         }catch(Exception ex){
             ex.printStackTrace();
