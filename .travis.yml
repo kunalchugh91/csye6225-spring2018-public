@@ -12,6 +12,11 @@ notifications:
   on_success: always
   on_failure: always
 
+branches:
+  except:
+  - Assignment_8
+  - master
+
 after_success:
   - cd ..
   - mkdir codedeploy #codedeploy folder made inside travis
@@ -37,7 +42,7 @@ deploy:
     access_key_id: $access_key_id
     secret_access_key: $secret_access_key
     on:
-      all_branches: true
+      branch: master
   - provider: codedeploy
     access_key_id: $access_key_id
     bucket: $bucket_name_code_deploy
@@ -49,4 +54,4 @@ deploy:
     secret_access_key: $secret_access_key
     wait-until-deployed: true
     on:
-      all_branches: true
+      branch: master
