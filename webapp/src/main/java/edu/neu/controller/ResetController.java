@@ -26,6 +26,8 @@ public class ResetController {
     @RequestMapping(value={"/reset"}, method = RequestMethod.GET)
     public ModelAndView goToResetPage(){
         ModelAndView modelAndView = new ModelAndView();
+        User user = new User();
+		modelAndView.addObject("user", user);
         modelAndView.setViewName("reset");
         return modelAndView;
     }
