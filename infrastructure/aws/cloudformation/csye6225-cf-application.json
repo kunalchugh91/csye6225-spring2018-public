@@ -121,7 +121,10 @@
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.password=${DBPassword}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
                 },
                 {
-                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dbucket.name=${DOMAIN}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dbucket.name=${APPDOMAIN}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Ddomain.name=${DOMAIN}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
                 },
                 "chmod +x /usr/share/tomcat8/bin/setenv.sh\n",
                 "chmod 777 -R /tmp\n",
@@ -158,7 +161,7 @@
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "BucketName": {
-          "Ref": "DOMAIN"
+          "Ref": "APPDOMAIN"
         }
       }
     },
@@ -192,6 +195,10 @@
     },
     "SUBNETID2": {
       "Description": "The subnet id",
+      "Type": "String"
+    },
+    "APPDOMAIN": {
+      "Description": "The web app domain name",
       "Type": "String"
     },
     "DOMAIN": {
