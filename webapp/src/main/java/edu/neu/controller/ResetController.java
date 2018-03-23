@@ -1,6 +1,6 @@
 package edu.neu.controller;
 
-
+import edu.neu.model.User;
 import edu.neu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +13,8 @@ import com.amazonaws.auth.*;
 import com.amazonaws.regions.*;
 import com.amazonaws.services.sns.model.*;
 
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import java.util.*;
 
 @Controller
@@ -21,8 +23,10 @@ public class ResetController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value={"/reset"}, method = RequestMethod.GET)
+    @RequestMapping(value={"/reset"}, method = RequestMethod.POST)
     public ModelAndView resetPassword(@ModelAttribute("user") User user, BindingResult bindingResult){
+        ModelAndView modelAndView = new ModelAndView();
+        
         try{
             String email = user.getEmail();
             System.out.println("email "+email);
@@ -39,6 +43,9 @@ public class ResetController {
             }
         }catch(Exception ex){
             ex.printStackTrace();
+        }
+        finally{
+            return modelAndView;
         }
 
     }
