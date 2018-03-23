@@ -8,6 +8,14 @@
           {
             "AttributeName": "id",
             "AttributeType": "N"
+          },
+          {
+            "AttributeName": "userid",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "expirationtime",
+            "AttributeType": "N"
           }
         ],
         "KeySchema": [
@@ -20,7 +28,11 @@
           "ReadCapacityUnits": "5",
           "WriteCapacityUnits": "5"
         },
-        "TableName": "csye6225"
+        "TableName": "csye6225",
+        "TimeToLiveSpecification": {
+          "AttributeName": "expirationtime",
+          "Enabled": "true"
+        }
       }
     },
     "DBSubnetGroup": {
