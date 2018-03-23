@@ -23,6 +23,13 @@ public class ResetController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping(value={"/reset"}, method = RequestMethod.GET)
+    public ModelAndView goToResetPage(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("reset");
+        return modelAndView;
+    }
+
     @RequestMapping(value={"/reset"}, method = RequestMethod.POST)
     public ModelAndView resetPassword(@ModelAttribute("user") User user, BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView();
