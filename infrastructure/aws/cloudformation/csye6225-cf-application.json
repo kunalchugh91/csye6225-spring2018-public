@@ -10,7 +10,7 @@
             "AttributeType": "S"
           },
           {
-            "AttributeName": "id",
+            "AttributeName": "expirationtime",
             "AttributeType": "N"
           }
         ],
@@ -20,7 +20,7 @@
             "KeyType": "HASH"
           },
           {
-            "AttributeName": "id",
+            "AttributeName": "expirationtime",
             "KeyType": "RANGE"
           }
         ],
