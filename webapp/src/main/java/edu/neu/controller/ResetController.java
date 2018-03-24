@@ -44,7 +44,9 @@ public class ResetController {
         
         try{
             String email = user.getEmail();
-            String domain;
+            String  domain = System.getProperty("domain.name");
+            System.out.println("Domain "+domain);
+            
             AmazonSNSClient snsClient = new AmazonSNSClient(new DefaultAWSCredentialsProviderChain());
             snsClient.setRegion(Region.getRegion(Regions.US_EAST_1));
 
@@ -54,9 +56,9 @@ public class ResetController {
             topicArns.addAll(result.getTopics());
 
             for (Topic topic : topicArns) {
+                System.out.println("equals "+"PasswordResetSNSTopic".equals(topic.getTopicArn());
                 if("PasswordResetSNSTopic".equals(topic.getTopicArn())){
-                    domain = System.getProperty("domain.name");
-                    System.out.println("Domain "+domain);
+                   
 
                     // Initialize example message class
                     SNSMessage message = new SNSMessage("Reset Password");
