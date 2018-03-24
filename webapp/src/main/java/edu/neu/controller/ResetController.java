@@ -45,13 +45,11 @@ public class ResetController {
         try{
             String email = user.getEmail();
             String domain = System.getProperty("domain.name");
-            System.out.println("Domain "+domain);
-
             String messageBody = "http://"+
                     domain+
-                    "reset?email="+
+                    "/reset?email="+
                     email+
-                    "token=4e163b8b-889a-4ce7-a3f7-61041e323c23";
+                    "&token=4e163b8b-889a-4ce7-a3f7-61041e323c23";
 
             AmazonSNSClient snsClient = new AmazonSNSClient(new DefaultAWSCredentialsProviderChain());
             snsClient.setRegion(Region.getRegion(Regions.US_EAST_1));
