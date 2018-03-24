@@ -56,9 +56,7 @@ public class ResetController {
             topicArns.addAll(result.getTopics());
 
             for (Topic topic : topicArns) {
-                System.out.println("equals "+"PasswordResetSNSTopic".equals(topic.getTopicArn()));
-                if("PasswordResetSNSTopic".equals(topic.getTopicArn())){
-                   
+                if(topic.getTopicArn().endsWith("PasswordResetSNSTopic")){
 
                     // Initialize example message class
                     SNSMessage message = new SNSMessage("Reset Password");
