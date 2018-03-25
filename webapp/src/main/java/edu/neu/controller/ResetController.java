@@ -46,7 +46,7 @@ public class ResetController {
             String email = user.getEmail();
             String domain = System.getProperty("domain.name");
             String messageBody = "Hi "+email+
-            "\n\nWe received a request for password reset. Please click on the following link to reset your password.\n\n"
+            "\n\nWe received a request for password reset. Please click on the following link to reset your password.\n\n"+
             "http://"+
                     domain+
                     "/reset?email="+
