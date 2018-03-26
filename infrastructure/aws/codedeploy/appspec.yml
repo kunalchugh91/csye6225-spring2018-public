@@ -12,6 +12,8 @@ files:
     destination: /home/ubuntu
   - source: ./webapp/target/csye6225.war
     destination: /var/lib/tomcat8/webapps
+  - source: ./cloudWatchRestart.sh
+    destination: /home/ubuntu
   - source: ./awslogs.conf
     destination: /home/ubuntu
 
@@ -24,6 +26,10 @@ hooks:
   BeforeInstall:
    - location: ./beforeInstall.sh
      timeout: 180
+     runas: ubuntu
+  AfterInstall:
+   - location: ./cloudWatchRestart.sh
+     timeout: 360
      runas: ubuntu
   ApplicationStart:
    - location: ./applicationStart.sh
