@@ -41,10 +41,14 @@ public class ResetController {
     @RequestMapping(value={"/reset"}, method = RequestMethod.POST)
     public ModelAndView resetPassword(@ModelAttribute("user") User user, BindingResult bindingResult){
         ModelAndView modelAndView = new ModelAndView();
-        
+
         try{
             String email = user.getEmail();
             String domain = System.getProperty("domain.name");
+
+            modelAndView.setViewName("reset");
+            modelAndView.addObject("ResetMessage", "Password reset mail has been sent");
+
             String messageBody = "Hi "+email+
             "\n\nWe received a request for password reset. Please click on the following link to reset your password.\n\n"+
             "http://"+
