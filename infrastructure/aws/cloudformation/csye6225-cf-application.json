@@ -6,21 +6,33 @@
       "Properties": {
         "AttributeDefinitions": [
           {
-            "AttributeName": "id",
+            "AttributeName": "userid",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "expirationtime",
             "AttributeType": "N"
           }
         ],
         "KeySchema": [
           {
-            "AttributeName": "id",
+            "AttributeName": "userid",
             "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "expirationtime",
+            "KeyType": "RANGE"
           }
         ],
         "ProvisionedThroughput": {
           "ReadCapacityUnits": "5",
           "WriteCapacityUnits": "5"
         },
-        "TableName": "csye6225"
+        "TableName": "csye6225",
+        "TimeToLiveSpecification": {
+          "AttributeName": "expirationtime",
+          "Enabled": "true"
+        }
       }
     },
     "DBSubnetGroup": {
@@ -109,19 +121,26 @@
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.password=${DBPassword}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
                 },
                 {
-                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dbucket.name=${DOMAIN}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dbucket.name=${APPDOMAIN}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Ddomain.name=${DOMAIN}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
                 },
                 "chmod +x /usr/share/tomcat8/bin/setenv.sh\n",
                 "chmod 777 -R /tmp\n",
                 "chmod 777 /var/lib/tomcat8\n",
                 "chmod 777 /var/lib/tomcat8/webapps\n",
-                "sudo service tomcat8 restart \n"
+                "sudo service tomcat8 restart \n",
+                "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O\n",
+                "echo ' ' >> /home/ubuntu/awslogs.conf\n",
+                "sudo python ./awslogs-agent-setup.py --region us-east-1 --non-interactive --configfile=/home/ubuntu/awslogs.conf\n",
+                "sudo rm /home/ubuntu/awslogs.conf"
               ]
             ]
           }
         },
         "IamInstanceProfile":
-          "CodeDeployServiceRoleInstanceProfile",
+        "CodeDeployServiceRoleInstanceProfile",
         "Tags": [
           {
             "Key": "Name",
@@ -142,8 +161,15 @@
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "BucketName": {
-          "Ref": "DOMAIN"
+          "Ref": "APPDOMAIN"
         }
+      }
+    },
+    "SNSTopic": {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "DisplayName" : "MySNSTopic",
+        "TopicName" : "PasswordResetSNSTopic"
       }
     }
   },
@@ -169,6 +195,10 @@
     },
     "SUBNETID2": {
       "Description": "The subnet id",
+      "Type": "String"
+    },
+    "APPDOMAIN": {
+      "Description": "The web app domain name",
       "Type": "String"
     },
     "DOMAIN": {
