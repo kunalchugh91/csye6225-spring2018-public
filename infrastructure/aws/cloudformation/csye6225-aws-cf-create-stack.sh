@@ -50,10 +50,9 @@ PUBLIC_SUBNET=$(aws cloudformation list-stack-resources --stack-name $1-networki
 SUBNET_ID_1=$(aws cloudformation list-stack-resources --stack-name $1-networking --query 'StackResourceSummaries[?LogicalResourceId==`PrivateSubnet1`][PhysicalResourceId]' --output text)
 SUBNET_ID_2=$(aws cloudformation list-stack-resources --stack-name $1-networking --query 'StackResourceSummaries[?LogicalResourceId==`PrivateSubnet2`][PhysicalResourceId]' --output text)
 
-SGID=$(aws ec2 describe-security-groups --filters Name=ip-permission.from-port,Values=22 --query 'SecurityGroups[*].{Name:GroupId}[0]' --output text)
+SGID=$(aws ec2 describe-security-groups --filters "Name=tag:aws:cloudformation:stack-name,Values=$1-networking" Name=ip-permission.from-port,Values=22 --query 'SecurityGroups[*].{Name:GroupId}[0]' --output text)
 
-DBSGID=$(aws ec2 describe-security-groups --filters Name=ip-permission.from-port,Values=3306 --query 'SecurityGroups[*].{Name:GroupId}[0]' --output text)
-echo $DBSGID
+DBSGID=$(aws ec2 describe-security-groups --filters "Name=tag:aws:cloudformation:stack-name,Values=$1-networking" Name=ip-permission.from-port,Values=3306 --query 'SecurityGroups[*].{Name:GroupId}[0]' --output text)
 
 DBUser=root
 DBPassword=masteruserpassword
