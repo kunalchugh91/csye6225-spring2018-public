@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Search Page</title>
+    <title>Reset Page</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -14,6 +14,7 @@
     <div class="container">
         <div class="row">
             <form th:action="@{/reset}" class="form-register" method="post" th:object="${user}">
+                <h2>Reset Password</h2>
                 <div class="form-group">
                     <div class="col-sm-9">
                         <input type="text" th:field="*{email}" placeholder="Email Id" class="form-control" />
@@ -26,6 +27,9 @@
             </form>
         </div>
 
+        <span th:utext="${ResetMessage}"></span>
+
+      </br>
 
         <div class="row">
             <form th:action="@{/login}" method="get">
