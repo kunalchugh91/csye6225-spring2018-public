@@ -66,29 +66,37 @@
           "Ref": "DBSubnetGroup"
         },
         "MasterUserPassword": "masteruserpassword",
-        "VPCSecurityGroups": [{"Ref": "DBSGID"}]
+        "VPCSecurityGroups": [
+          {
+            "Ref": "DBSGID"
+          }
+        ]
       }
     },
-    "EC2Instance": {
-      "Type": "AWS::EC2::Instance",
+    "AutoScalingConfig": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
         "ImageId": "ami-66506c1c",
         "InstanceType": "t2.micro",
-        "DisableApiTermination": true,
         "AvailabilityZone": "us-east-1a",
+        "AssociatePublicIpAddress": true,
         "SubnetId": {
           "Ref": "PUBLICSUBNETID"
         },
-        "Volumes": [
+        "BlockDeviceMappings": [{
+          "DeviceName": "/dev/sdf",
+          "Ebs": {
+            "VolumeSize": "16",
+            "VolumeType": "gp2"
+          }
+        }],
+
+        "KeyName": "CSYE6225",
+        "SecurityGroupIds": [
           {
-            "VolumeId": {
-              "Ref": "NewVolume"
-            },
-            "Device": "/dev/sdk"
+            "Ref": "SGID"
           }
         ],
-        "KeyName": "CSYE6225",
-        "SecurityGroupIds": [{"Ref": "SGID"}],
         "UserData": {
           "Fn::Base64": {
             "Fn::Join": [
@@ -139,22 +147,131 @@
             ]
           }
         },
-        "IamInstanceProfile":
-        "CodeDeployServiceRoleInstanceProfile",
+        "IamInstanceProfile": "CodeDeployServiceRoleInstanceProfile"
+      }
+    },
+    "MyAutoScalingGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "VPCZoneIdentifier": [
+          {
+            "Ref": "PUBLICSUBNETID"
+          }
+        ],
+        "LaunchConfigurationName": {
+          "Ref": "AutoScalingConfig"
+        },
+        "TargetGroupARNs": [
+          {
+            "Ref": "ALBTargetGroup"
+          }
+        ],
+        "MinSize": "3",
+        "MaxSize": "7",
+        "DesiredCapacity": "3",
         "Tags": [
           {
-            "Key": "Name",
-            "Value": "MyEC2Instance"
+            "PropagateAtLaunch": true,
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "CSYE_6225_AutoScaling"
+              }
+            ]
           }
         ]
       }
     },
-    "NewVolume": {
-      "Type": "AWS::EC2::Volume",
+    "WebServerScaleUpPolicy": {
+      "Type": "AWS::AutoScaling::ScalingPolicy",
       "Properties": {
-        "AvailabilityZone": "us-east-1a",
-        "Size": 16,
-        "VolumeType": "gp2"
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": {
+          "Ref": "MyAutoScalingGroup"
+        },
+        "Cooldown": "60",
+        "ScalingAdjustment": "1"
+      }
+    },
+    "WebServerScaleDownPolicy": {
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": {
+          "Ref": "MyAutoScalingGroup"
+        },
+        "Cooldown": "60",
+        "ScalingAdjustment": "-1"
+      }
+    },
+    "CPUAlarmHigh": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "300",
+        "EvaluationPeriods": "2",
+        "Threshold": "15",
+        "AlarmActions": [
+          {
+            "Ref": "MyAutoScalingGroup"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "MyAutoScalingGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold"
+      }
+    },
+    "CPUAlarmLow": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "300",
+        "EvaluationPeriods": "2",
+        "Threshold": "10",
+        "AlarmActions": [
+          {
+            "Ref": "WebServerScaleDownPolicy"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "LessThanThreshold"
+      }
+    },
+    "ALBTargetGroup" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "Name" : "LB_Target_Group",
+        "Port" : "8080",
+        "HealthCheckPort": "8080",
+        "Matcher":{
+          "HttpCode" : "401,200"
+        },
+        "HealthCheckIntervalSeconds": 30,
+        "HealthCheckTimeoutSeconds": 5,
+        "HealthyThresholdCount": 3,
+        "Protocol" : "HTTP",
+        "VpcId": {
+          "Ref": "VPCID"
+        }
       }
     },
     "myBucket": {
@@ -166,15 +283,18 @@
       }
     },
     "SNSTopic": {
-      "Type" : "AWS::SNS::Topic",
-      "Properties" : {
-        "DisplayName" : "MySNSTopic",
-        "TopicName" : "PasswordResetSNSTopic"
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "DisplayName": "MySNSTopic",
+        "TopicName": "PasswordResetSNSTopic"
       }
     }
   },
   "Parameters": {
-    "PUBLICSUBNETID":{
+    "VPCID": {
+      "Type": "String"
+    },
+    "PUBLICSUBNETID": {
       "Type": "String"
     },
     "SGID": {

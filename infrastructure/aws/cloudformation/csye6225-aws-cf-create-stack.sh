@@ -57,7 +57,7 @@ DBSGID=$(aws ec2 describe-security-groups --filters "Name=tag:aws:cloudformation
 DBUser=root
 DBPassword=masteruserpassword
 
-aws cloudformation create-stack --stack-name $1-application --template-body file://./csye6225-cf-application.json --parameters ParameterKey=PUBLICSUBNETID,ParameterValue=$PUBLIC_SUBNET ParameterKey=SUBNETID1,ParameterValue=$SUBNET_ID_1 ParameterKey=SUBNETID2,ParameterValue=$SUBNET_ID_2 ParameterKey=DOMAIN,ParameterValue=${DOMAIN_NAME%?} ParameterKey=APPDOMAIN,ParameterValue=$APP_DOMAIN_NAME ParameterKey=SGID,ParameterValue=$SGID ParameterKey=DBSGID,ParameterValue=$DBSGID ParameterKey=DBUser,ParameterValue=$DBUser ParameterKey=DBPassword,ParameterValue=$DBPassword 
+aws cloudformation create-stack --stack-name $1-application --template-body file://./csye6225-cf-application.json --parameters ParameterKey=VPCID,ParameterValue=$VPC_ID ParameterKey=PUBLICSUBNETID,ParameterValue=$PUBLIC_SUBNET ParameterKey=SUBNETID1,ParameterValue=$SUBNET_ID_1 ParameterKey=SUBNETID2,ParameterValue=$SUBNET_ID_2 ParameterKey=DOMAIN,ParameterValue=${DOMAIN_NAME%?} ParameterKey=APPDOMAIN,ParameterValue=$APP_DOMAIN_NAME ParameterKey=SGID,ParameterValue=$SGID ParameterKey=DBSGID,ParameterValue=$DBSGID ParameterKey=DBUser,ParameterValue=$DBUser ParameterKey=DBPassword,ParameterValue=$DBPassword 
 
 aws cloudformation wait stack-create-complete --stack-name $1-application
 STACKDETAILS=$(aws cloudformation describe-stacks --stack-name $1-application --query Stacks[0].StackId --output text)
