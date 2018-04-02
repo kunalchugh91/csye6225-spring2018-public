@@ -53,6 +53,15 @@
             "VpcId": { "Ref": "VPC" }
           }
         },
+        "PublicSubnet2": {
+          "Type" : "AWS::EC2::Subnet",
+          "Properties" : {
+            "AvailabilityZone" : "us-east-1b",
+            "CidrBlock" : "10.0.3.0/24",
+            "MapPublicIpOnLaunch": true,
+            "VpcId": { "Ref": "VPC" }
+          }
+        },
         "PrivateSubnet1": {
           "Type" : "AWS::EC2::Subnet",
           "Properties" : {
@@ -88,18 +97,14 @@
           "Properties" : {
             "GroupName" : "csye6225-load-balancer-sg",
             "GroupDescription" : "Security group for load balancer",
-            "SecurityGroupIngress" : [ {
-              "IpProtocol" : "tcp",
-              "FromPort" : "22",
-              "ToPort" : "22",
-              "CidrIp" : "0.0.0.0/0"
-            },
+            "SecurityGroupEgress" : [
               {
                 "IpProtocol" : "tcp",
                 "FromPort" : "8080",
                 "ToPort" : "8080",
-                "CidrIp" : "0.0.0.0/0"
-              },
+                "DestinationSecurityGroupId" : "csye6225-webapp"
+              }],
+            "SecurityGroupIngress" : [
               {
                 "IpProtocol" : "tcp",
                 "FromPort" : "443",
@@ -114,24 +119,7 @@
           "Properties" : {
              "GroupName" : "csye6225-webapp",
              "GroupDescription" : "Security group for web server",
-             "SecurityGroupIngress" : [ {
-                 "IpProtocol" : "tcp",
-                 "FromPort" : "22",
-                 "ToPort" : "22",
-                 "CidrIp" : "0.0.0.0/0"
-              },
-              {
-                   "IpProtocol" : "tcp",
-                   "FromPort" : "8080",
-                   "ToPort" : "8080",
-                   "CidrIp" : "0.0.0.0/0"
-                },
-                {
-                   "IpProtocol" : "tcp",
-                   "FromPort" : "443",
-                   "ToPort" : "443",
-                   "CidrIp" : "0.0.0.0/0"
-                },
+             "SecurityGroupIngress" : [
                {
                  "IpProtocol" : "tcp",
                  "FromPort" : "8080",

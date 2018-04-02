@@ -219,7 +219,7 @@
       "Description": "Load Balancer security group name",
       "Type": "String"
     },
-    "PUBLICSUBNETID":{
+    "PUBLICSUBNETID2":{
       "Type": "String"
     }
 
