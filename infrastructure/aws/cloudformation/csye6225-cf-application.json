@@ -175,7 +175,8 @@
     "LoadBalancer": {
       "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties" : {
-        "Name" : "Load Balancer",
+        "Name" : "load-balancer-1",
+        "scheme" : "internet-facing",
         "SecurityGroups" : [ { "Ref": "LBSG" } ],
         "Subnets" : [ { "Ref": "PUBLICSUBNETID" }, { "Ref": "PUBLICSUBNETID2" }],
         "Type" : "application",
@@ -219,6 +220,34 @@
           "CertificateArn" : String
         } ]
         "ListenerArn" : { "Ref": "Listener" }
+      }
+    },
+    "TargetGroup": {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "HealthCheckIntervalSeconds" : String,
+        "HealthCheckPath" : String,
+        "HealthCheckPort" : String,
+        "HealthCheckProtocol" : String,
+        "HealthCheckTimeoutSeconds" : Integer,
+        "HealthyThresholdCount" : Integer,
+        "Matcher" : Matcher,
+        "Name" : "target-group-1",
+        "Port" : "8080",
+        "Protocol" : "HTTP",
+        "Tags" : [ Resource Tag, ... ],
+        "TargetGroupAttributes" : [ {
+          "Key" : "stickiness.enabled",
+          "Value" : "true"
+        } ],
+        "Targets" : [ {
+          "AvailabilityZone" : String,
+          "Id" : String,
+          "Port" : Integer
+        } ],
+        "TargetType" : "instance",
+        "UnhealthyThresholdCount" : Integer,
+        "VpcId" : String
       }
     }
   },
