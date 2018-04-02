@@ -171,6 +171,16 @@
         "DisplayName" : "MySNSTopic",
         "TopicName" : "PasswordResetSNSTopic"
       }
+    },
+    "LoadBalancer": {
+      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties" : {
+        "Name" : "Load Balancer",
+        "SecurityGroups" : [ { "Ref": "LBSG" } ],
+        "Subnets" : [ { "Ref": "PUBLICSUBNETID" }, { "Ref": "PUBLICSUBNETID2" }],
+        "Type" : "application",
+        "IpAddressType" : "ipv4"
+      }
     }
   },
   "Parameters": {
@@ -204,6 +214,14 @@
     "DOMAIN": {
       "Description": "The domain name",
       "Type": "String"
+    },
+    "LBSG": {
+      "Description": "Load Balancer security group name",
+      "Type": "String"
+    },
+    "PUBLICSUBNETID":{
+      "Type": "String"
     }
+
   }
 }
