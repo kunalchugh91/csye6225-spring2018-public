@@ -204,7 +204,7 @@
         "Statistic": "Average",
         "Period": "300",
         "EvaluationPeriods": "2",
-        "Threshold": "15",
+        "Threshold": "90",
         "AlarmActions": [
           {
             "Ref": "WebServerScaleUpPolicy"
@@ -230,7 +230,7 @@
         "Statistic": "Average",
         "Period": "300",
         "EvaluationPeriods": "2",
-        "Threshold": "10",
+        "Threshold": "70",
         "AlarmActions": [
           {
             "Ref": "WebServerScaleDownPolicy"

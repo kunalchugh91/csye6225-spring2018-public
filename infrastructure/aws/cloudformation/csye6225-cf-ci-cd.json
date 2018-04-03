@@ -271,13 +271,7 @@
           "Ref": "CDAPPNAME"
         },
         "DeploymentGroupName": "CSYE6225-CodeDeploymentGroup",
-        "Ec2TagFilters": [
-          {
-            "Key": "Name",
-            "Type": "KEY_AND_VALUE",
-            "Value": "MyEC2Instance"
-          }
-        ],
+        "AutoScalingGroups" : [ "CSYE_6225_AutoScaling"],
         "ServiceRoleArn": {
           "Fn::GetAtt": [
             "CodeDeployServiceRole",
@@ -339,9 +333,9 @@
           ]
         },
         "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole", 
-          "arn:aws:iam::aws:policy/AmazonSESFullAccess", 
-          "arn:aws:iam::aws:policy/AmazonSNSFullAccess", 
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+          "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
           "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
         ],
         "RoleName": {"Ref": "LAMBDAUSERROLE"}
