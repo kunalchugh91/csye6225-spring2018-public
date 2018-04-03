@@ -66,11 +66,7 @@
           "Ref": "DBSubnetGroup"
         },
         "MasterUserPassword": "masteruserpassword",
-        "VPCSecurityGroups": [
-          {
-            "Ref": "DBSGID"
-          }
-        ]
+        "VPCSecurityGroups": [{"Ref": "DBSGID"}]
       }
     },
     "AutoScalingConfig": {
@@ -78,11 +74,7 @@
       "Properties": {
         "ImageId": "ami-66506c1c",
         "InstanceType": "t2.micro",
-        "AvailabilityZone": "us-east-1a",
         "AssociatePublicIpAddress": true,
-        "SubnetId": {
-          "Ref": "PUBLICSUBNETID"
-        },
         "BlockDeviceMappings": [{
           "DeviceName": "/dev/sdf",
           "Ebs": {
@@ -92,7 +84,7 @@
         }],
 
         "KeyName": "CSYE6225",
-        "SecurityGroupIds": [
+        "SecurityGroups": [
           {
             "Ref": "SGID"
           }
@@ -172,12 +164,8 @@
         "Tags": [
           {
             "PropagateAtLaunch": true,
-            "Tags": [
-              {
-                "Key": "Name",
-                "Value": "CSYE_6225_AutoScaling"
-              }
-            ]
+            "Key": "Name",
+            "Value": "CSYE_6225_AutoScaling"
           }
         ]
       }
@@ -216,7 +204,7 @@
         "Threshold": "15",
         "AlarmActions": [
           {
-            "Ref": "MyAutoScalingGroup"
+            "Ref": "WebServerScaleUpPolicy"
           }
         ],
         "Dimensions": [
@@ -249,17 +237,58 @@
           {
             "Name": "AutoScalingGroupName",
             "Value": {
-              "Ref": "WebServerGroup"
+              "Ref": "MyAutoScalingGroup"
             }
           }
         ],
         "ComparisonOperator": "LessThanThreshold"
       }
     },
+    "LoadBalancer": {
+      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties" : {
+        "Name" : "load-balancer-1",
+        "Scheme" : "internet-facing",
+        "SecurityGroups" : [ { "Ref": "LBSG" } ],
+        "Subnets" : [ { "Ref": "PUBLICSUBNETID" }, { "Ref": "PUBLICSUBNETID2" }],
+        "Type" : "application",
+        "IpAddressType" : "ipv4"
+      }
+    },
+    "Listener": {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "Certificates" : [ {
+          "CertificateArn" : {"Ref": "CERTIFICATE"}
+        } ],
+        "DefaultActions" : [ {
+          "TargetGroupArn" : {"Ref": "ALBTargetGroup"},
+          "Type" : "forward"
+        } ],
+        "LoadBalancerArn" : { "Ref": "LoadBalancer" },
+        "Port" : "443",
+        "Protocol" : "HTTPS"
+      }
+    },
+    "ListenerRule": {
+      "Type" : "AWS::ElasticLoadBalancingV2::ListenerRule",
+      "Properties" : {
+        "Actions" : [ {
+          "TargetGroupArn" : {"Ref": "ALBTargetGroup"},
+          "Type" : "forward"
+        }],
+        "Conditions" : [ {
+          "Field" : "host-header",
+          "Values" : [ { "Ref": "DOMAIN" } ]
+        } ],
+        "ListenerArn" : { "Ref": "Listener" },
+        "Priority" : "1"
+      }
+    },
     "ALBTargetGroup" : {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
-        "Name" : "LB_Target_Group",
+        "Name" : "LBTarget",
         "Port" : "8080",
         "HealthCheckPort": "8080",
         "Matcher":{
@@ -323,6 +352,17 @@
     },
     "DOMAIN": {
       "Description": "The domain name",
+      "Type": "String"
+    },
+    "LBSG": {
+      "Description": "Load Balancer security group name",
+      "Type": "String"
+    },
+    "PUBLICSUBNETID2":{
+      "Type": "String"
+    },
+    "CERTIFICATE":{
+      "Description": "ARN of SSL Certificate",
       "Type": "String"
     }
   }
