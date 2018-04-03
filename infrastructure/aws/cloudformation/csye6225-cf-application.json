@@ -112,7 +112,7 @@
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.profiles.active=aws\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
                 },
                 {
-                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.url=jdbc:mysql://${DBInstance.Endpoint.Address}:3306/cloud\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
+                 "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.url=jdbc:mysql://${DBInstance.Endpoint.Address}:3306/cloud\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
                 },
                 {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.username=${DBUser}\"' >> /usr/share/tomcat8/bin/setenv.sh\n"
@@ -148,6 +148,9 @@
         "VPCZoneIdentifier": [
           {
             "Ref": "PUBLICSUBNETID"
+          },
+          {
+            "Ref": "PUBLICSUBNETID2"
           }
         ],
         "LaunchConfigurationName": {
@@ -317,7 +320,29 @@
         "DisplayName": "MySNSTopic",
         "TopicName": "PasswordResetSNSTopic"
       }
-    }
+    },
+   "Route53RecordSetA" : {
+   "Type" : "AWS::Route53::RecordSet",
+   "Properties" : {
+     "AliasTarget":{
+                    "DNSName" : { "Fn::GetAtt" : [ "LoadBalancer", "DNSName" ] },
+                    "EvaluateTargetHealth" : "true",
+                    "HostedZoneId" : { "Fn::GetAtt" : [ "LoadBalancer", "CanonicalHostedZoneID" ] }
+     },
+      "HostedZoneName" : {
+                            "Fn::Join" : [ "", [
+                             {"Ref" : "DOMAIN"} ,"."
+                          ] ]
+                        },
+      "Comment" : "DNS name for my instance.",
+      "Name" : {
+         "Fn::Join" : [ "", [
+            {"Ref" : "DOMAIN"} ,"."
+         ] ]
+      },
+      "Type" : "A"
+   }
+}
   },
   "Parameters": {
     "VPCID": {
