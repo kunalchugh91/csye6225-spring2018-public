@@ -13,3 +13,4 @@ Running the application:
 4. If build is successful, navigate to target folder
 5. Copy over the war file (csye.war) to your server
 6. Navigate to localhost:8080/csye/ on browser
+
