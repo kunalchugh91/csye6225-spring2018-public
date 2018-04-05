@@ -271,7 +271,13 @@
           "Ref": "CDAPPNAME"
         },
         "DeploymentGroupName": "CSYE6225-CodeDeploymentGroup",
-        "AutoScalingGroups" : [ "CSYE_6225_AutoScaling"],
+        "Ec2TagFilters": [
+          {
+            "Key": "Name",
+            "Type": "KEY_AND_VALUE",
+            "Value": "CSYE_6225_AutoScaling"
+          }
+        ],
         "ServiceRoleArn": {
           "Fn::GetAtt": [
             "CodeDeployServiceRole",
