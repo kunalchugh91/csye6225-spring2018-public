@@ -128,7 +128,7 @@
         }
       }
     },
-    "PrivateSubnetRouteTable": {
+    "PublicSubnetRouteTable": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "RouteTableId": {
@@ -139,7 +139,18 @@
         }
       }
     },
-    "PublicSubnetRouteTable": {
+    "PublicSubnetRouteTable1": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PublicRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnet2"
+        }
+      }
+    },
+    "PrivateSubnetRouteTable": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "RouteTableId": {
@@ -147,6 +158,17 @@
         },
         "SubnetId": {
           "Ref": "PrivateSubnet1"
+        }
+      }
+    },
+    "PrivateSubnetRouteTable2": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PrivateRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PrivateSubnet2"
         }
       }
     },

@@ -275,7 +275,7 @@
           {
             "Key": "Name",
             "Type": "KEY_AND_VALUE",
-            "Value": "MyEC2Instance"
+            "Value": "CSYE_6225_AutoScaling"
           }
         ],
         "ServiceRoleArn": {

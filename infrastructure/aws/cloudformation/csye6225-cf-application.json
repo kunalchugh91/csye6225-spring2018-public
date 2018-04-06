@@ -252,7 +252,13 @@
         "SecurityGroups" : [ { "Ref": "LBSG" } ],
         "Subnets" : [ { "Ref": "PUBLICSUBNETID" }, { "Ref": "PUBLICSUBNETID2" }],
         "Type" : "application",
-        "IpAddressType" : "ipv4"
+        "IpAddressType" : "ipv4",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CSYE_6225_AutoScaling"
+          }
+        ]
       }
     },
     "Listener": {
@@ -270,21 +276,6 @@
         "Protocol" : "HTTPS"
       }
     },
-    "ListenerRule": {
-      "Type" : "AWS::ElasticLoadBalancingV2::ListenerRule",
-      "Properties" : {
-        "Actions" : [ {
-          "TargetGroupArn" : {"Ref": "ALBTargetGroup"},
-          "Type" : "forward"
-        }],
-        "Conditions" : [ {
-          "Field" : "host-header",
-          "Values" : [ { "Ref": "DOMAIN" } ]
-        } ],
-        "ListenerArn" : { "Ref": "Listener" },
-        "Priority" : "1"
-      }
-    },
     "ALBTargetGroup" : {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
@@ -300,7 +291,13 @@
         "Protocol" : "HTTP",
         "VpcId": {
           "Ref": "VPCID"
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CSYE_6225_AutoScaling"
+          }
+        ]
       }
     },
     "myBucket": {
