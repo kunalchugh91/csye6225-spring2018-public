@@ -66,7 +66,11 @@
           "Ref": "DBSubnetGroup"
         },
         "MasterUserPassword": "masteruserpassword",
-        "VPCSecurityGroups": [{"Ref": "DBSGID"}]
+        "VPCSecurityGroups": [
+          {
+            "Ref": "DBSGID"
+          }
+        ]
       }
     },
     "AutoScalingConfig": {
@@ -75,14 +79,15 @@
         "ImageId": "ami-66506c1c",
         "InstanceType": "t2.micro",
         "AssociatePublicIpAddress": true,
-        "BlockDeviceMappings": [{
-          "DeviceName": "/dev/sdf",
-          "Ebs": {
-            "VolumeSize": "16",
-            "VolumeType": "gp2"
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sdf",
+            "Ebs": {
+              "VolumeSize": "16",
+              "VolumeType": "gp2"
+            }
           }
-        }],
-
+        ],
         "KeyName": "CSYE6225",
         "SecurityGroups": [
           {
@@ -148,6 +153,9 @@
         "VPCZoneIdentifier": [
           {
             "Ref": "PUBLICSUBNETID"
+          },
+          {
+            "Ref": "PUBLICSUBNETID2"
           }
         ],
         "LaunchConfigurationName": {
@@ -201,7 +209,7 @@
         "Statistic": "Average",
         "Period": "300",
         "EvaluationPeriods": "2",
-        "Threshold": "15",
+        "Threshold": "90",
         "AlarmActions": [
           {
             "Ref": "WebServerScaleUpPolicy"
@@ -227,7 +235,7 @@
         "Statistic": "Average",
         "Period": "300",
         "EvaluationPeriods": "2",
-        "Threshold": "10",
+        "Threshold": "70",
         "AlarmActions": [
           {
             "Ref": "WebServerScaleDownPolicy"
@@ -245,14 +253,25 @@
       }
     },
     "LoadBalancer": {
-      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
-      "Properties" : {
-        "Name" : "load-balancer-1",
-        "Scheme" : "internet-facing",
-        "SecurityGroups" : [ { "Ref": "LBSG" } ],
-        "Subnets" : [ { "Ref": "PUBLICSUBNETID" }, { "Ref": "PUBLICSUBNETID2" }],
-        "Type" : "application",
-        "IpAddressType" : "ipv4",
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Name": "load-balancer-1",
+        "Scheme": "internet-facing",
+        "SecurityGroups": [
+          {
+            "Ref": "LBSG"
+          }
+        ],
+        "Subnets": [
+          {
+            "Ref": "PUBLICSUBNETID"
+          },
+          {
+            "Ref": "PUBLICSUBNETID2"
+          }
+        ],
+        "Type": "application",
+        "IpAddressType": "ipv4",
         "Tags": [
           {
             "Key": "Name",
@@ -262,33 +281,43 @@
       }
     },
     "Listener": {
-      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
-      "Properties" : {
-        "Certificates" : [ {
-          "CertificateArn" : {"Ref": "CERTIFICATE"}
-        } ],
-        "DefaultActions" : [ {
-          "TargetGroupArn" : {"Ref": "ALBTargetGroup"},
-          "Type" : "forward"
-        } ],
-        "LoadBalancerArn" : { "Ref": "LoadBalancer" },
-        "Port" : "443",
-        "Protocol" : "HTTPS"
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "Certificates": [
+          {
+            "CertificateArn": {
+              "Ref": "CERTIFICATE"
+            }
+          }
+        ],
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "ALBTargetGroup"
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "LoadBalancer"
+        },
+        "Port": "443",
+        "Protocol": "HTTPS"
       }
     },
-    "ALBTargetGroup" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties" : {
-        "Name" : "LBTarget",
-        "Port" : "8080",
+    "ALBTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Name": "LBTarget",
+        "Port": "8080",
         "HealthCheckPort": "8080",
-        "Matcher":{
-          "HttpCode" : "401,200"
+        "Matcher": {
+          "HttpCode": "401,200"
         },
         "HealthCheckIntervalSeconds": 30,
         "HealthCheckTimeoutSeconds": 5,
         "HealthyThresholdCount": 3,
-        "Protocol" : "HTTP",
+        "Protocol": "HTTP",
         "VpcId": {
           "Ref": "VPCID"
         },
@@ -313,6 +342,50 @@
       "Properties": {
         "DisplayName": "MySNSTopic",
         "TopicName": "PasswordResetSNSTopic"
+      }
+    },
+    "Route53RecordSetA": {
+      "Type": "AWS::Route53::RecordSet",
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
+              "LoadBalancer",
+              "DNSName"
+            ]
+          },
+          "EvaluateTargetHealth": "true",
+          "HostedZoneId": {
+            "Fn::GetAtt": [
+              "LoadBalancer",
+              "CanonicalHostedZoneID"
+            ]
+          }
+        },
+        "HostedZoneName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "DOMAIN"
+              },
+              "."
+            ]
+          ]
+        },
+        "Comment": "DNS name for my instance.",
+        "Name": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "DOMAIN"
+              },
+              "."
+            ]
+          ]
+        },
+        "Type": "A"
       }
     }
   },
@@ -355,10 +428,10 @@
       "Description": "Load Balancer security group name",
       "Type": "String"
     },
-    "PUBLICSUBNETID2":{
+    "PUBLICSUBNETID2": {
       "Type": "String"
     },
-    "CERTIFICATE":{
+    "CERTIFICATE": {
       "Description": "ARN of SSL Certificate",
       "Type": "String"
     }
