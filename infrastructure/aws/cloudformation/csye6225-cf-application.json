@@ -387,6 +387,37 @@
         },
         "Type": "A"
       }
+    },
+    "CodeDeployApp": {
+      "Type": "AWS::CodeDeploy::Application",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "CDAPPNAME"
+        }
+      }
+    },
+    "CodeDeployGroup": {
+      "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "CDAPPNAME"
+        },
+        "DeploymentGroupName": "CSYE6225-CodeDeploymentGroup",
+        "AutoScalingGroups" : [ { "Ref": "MyAutoScalingGroup" } ],
+        "Ec2TagFilters": [
+          {
+            "Key": "Name",
+            "Type": "KEY_AND_VALUE",
+            "Value": "CSYE_6225_AutoScaling"
+          }
+        ],
+        "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "CodeDeployServiceRole",
+            "Arn"
+          ]
+        }
+      }
     }
   },
   "Parameters": {
