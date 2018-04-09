@@ -403,6 +403,18 @@
           "Ref": "CDAPPNAME"
         },
         "DeploymentGroupName": "CSYE6225-CodeDeploymentGroup",
+        "Deployment" : {
+          "Description" : "Config for Code Deploy to use when new instances are scaled up",
+          "IgnoreApplicationStopFailures" : "true",
+          "Revision" : {
+            "RevisionType" : "S3",
+            "S3Location" : {
+              "Bucket" : String,
+              "BundleType" : "zip",
+              "Key" : String,
+            }
+          }
+        },
         "AutoScalingGroups" : [ { "Ref": "MyAutoScalingGroup" } ],
         "Ec2TagFilters": [
           {
@@ -464,6 +476,9 @@
     },
     "CERTIFICATE": {
       "Description": "ARN of SSL Certificate",
+      "Type": "String"
+    },
+    "CDAPPNAME": {
       "Type": "String"
     }
   }
