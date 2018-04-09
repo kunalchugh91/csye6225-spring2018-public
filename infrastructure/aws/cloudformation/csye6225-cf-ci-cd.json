@@ -235,7 +235,8 @@
               "Effect": "Allow",
               "Principal": {
                 "Service": [
-                  "codedeploy.amazonaws.com"
+                  "codedeploy.amazonaws.com",
+                  "application-autoscaling.amazonaws.com"
                 ]
               },
               "Action": "sts:AssumeRole"
