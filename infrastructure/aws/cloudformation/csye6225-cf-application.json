@@ -106,10 +106,6 @@
                 "sudo apt-get install wget -y \n",
                 "sudo apt-get install python -y \n",
                 "sudo apt-get update \n",
-                "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install \n",
-                "sudo chmod +x ./install \n",
-                "sudo ./install auto \n",
-                "sudo service codedeploy-agent start \n",
                 "sudo apt-get install tomcat8 -y\n",
                 "sudo service tomcat8 start\n",
                 "echo '#!/bin/sh' >> /usr/share/tomcat8/bin/setenv.sh \n",
@@ -139,7 +135,11 @@
                 "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O\n",
                 "echo ' ' >> /home/ubuntu/awslogs.conf\n",
                 "sudo python ./awslogs-agent-setup.py --region us-east-1 --non-interactive --configfile=/home/ubuntu/awslogs.conf\n",
-                "sudo rm /home/ubuntu/awslogs.conf"
+                "sudo rm /home/ubuntu/awslogs.conf",
+                "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install \n",
+                "sudo chmod +x ./install \n",
+                "sudo ./install auto \n",
+                "sudo service codedeploy-agent start \n"
               ]
             ]
           }
