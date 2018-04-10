@@ -40,7 +40,7 @@ echo "Networking Stack id: $STACKDETAILS"
 echo "Creating application stack"
 
 echo "Fetching VPC details"
-VPC_ID=$(aws ec2 describe-vpcs --query Vpcs[0].VpcId --output text)
+VPC_ID=$(aws ec2 describe-vpcs --filters Name=is-default,Values=false --query Vpcs[0].VpcId --output text)
 
 echo "Fetching domain name from Route 53"
 DOMAIN_NAME=$(aws route53 list-hosted-zones --query HostedZones[0].Name --output text)
