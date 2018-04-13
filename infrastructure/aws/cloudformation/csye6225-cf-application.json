@@ -323,6 +323,24 @@
         "VpcId": {
           "Ref": "VPCID"
         },
+        "TargetGroupAttributes":[
+          {
+              "Value": "true",
+              "Key": "stickiness.enabled"
+          },
+          {
+              "Value": "600",
+              "Key": "deregistration_delay.timeout_seconds"
+          },
+          {
+              "Value": "lb_cookie",
+              "Key": "stickiness.type"
+          },
+          {
+              "Value": "600",
+              "Key": "stickiness.lb_cookie.duration_seconds"
+          }
+        ],
         "Tags": [
           {
             "Key": "Name",
