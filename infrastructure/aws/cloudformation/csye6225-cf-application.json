@@ -210,7 +210,7 @@
         "Namespace": "AWS/EC2",
         "Statistic": "Average",
         "Period": "60",
-        "EvaluationPeriods": "2",
+        "EvaluationPeriods": "1",
         "Threshold": "10",
         "AlarmActions": [
           {
@@ -236,7 +236,7 @@
         "Namespace": "AWS/EC2",
         "Statistic": "Average",
         "Period": "60",
-        "EvaluationPeriods": "2",
+        "EvaluationPeriods": "1",
         "Threshold": "8",
         "AlarmActions": [
           {
