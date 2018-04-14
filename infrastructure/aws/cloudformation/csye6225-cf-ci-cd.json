@@ -235,7 +235,8 @@
               "Effect": "Allow",
               "Principal": {
                 "Service": [
-                  "codedeploy.amazonaws.com"
+                  "codedeploy.amazonaws.com",
+                  "application-autoscaling.amazonaws.com"
                 ]
               },
               "Action": "sts:AssumeRole"
@@ -253,36 +254,6 @@
       "Properties": {
         "BucketName": {
           "Ref": "CDOMAIN"
-        }
-      }
-    },
-    "CodeDeployApp": {
-      "Type": "AWS::CodeDeploy::Application",
-      "Properties": {
-        "ApplicationName": {
-          "Ref": "CDAPPNAME"
-        }
-      }
-    },
-    "CodeDeployGroup": {
-      "Type": "AWS::CodeDeploy::DeploymentGroup",
-      "Properties": {
-        "ApplicationName": {
-          "Ref": "CDAPPNAME"
-        },
-        "DeploymentGroupName": "CSYE6225-CodeDeploymentGroup",
-        "Ec2TagFilters": [
-          {
-            "Key": "Name",
-            "Type": "KEY_AND_VALUE",
-            "Value": "MyEC2Instance"
-          }
-        ],
-        "ServiceRoleArn": {
-          "Fn::GetAtt": [
-            "CodeDeployServiceRole",
-            "Arn"
-          ]
         }
       }
     },
@@ -339,9 +310,9 @@
           ]
         },
         "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole", 
-          "arn:aws:iam::aws:policy/AmazonSESFullAccess", 
-          "arn:aws:iam::aws:policy/AmazonSNSFullAccess", 
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+          "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
           "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
         ],
         "RoleName": {"Ref": "LAMBDAUSERROLE"}

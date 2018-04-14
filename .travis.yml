@@ -28,6 +28,7 @@ after_success:
   - pwd
   - cd ..
   - pwd
+  
 deploy:
   - provider: s3
     local_dir: codedeploy
@@ -37,7 +38,8 @@ deploy:
     access_key_id: $access_key_id
     secret_access_key: $secret_access_key
     on:
-      all_branches: true
+      all_branches: true     
+
   - provider: codedeploy
     access_key_id: $access_key_id
     bucket: $bucket_name_code_deploy
