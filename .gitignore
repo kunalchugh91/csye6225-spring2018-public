@@ -31,6 +31,7 @@ nbdist/
 ### JMeter ###
 /jmeter/Login users.jmx
 /jmeter/Register users.jmx
+/jmeter/Load_test.jmx
 
 #STS cache
 /webapp/.sts4-cache
